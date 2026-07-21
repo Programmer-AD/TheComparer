@@ -1,0 +1,6 @@
+# Ignore all obsidian files except of whitelist
+.obsidian/*
+!.obsidian/app.json
+!.obsidian/canvas.json
+!.obsidian/core-plugins.json
+!.obsidian/templates.json

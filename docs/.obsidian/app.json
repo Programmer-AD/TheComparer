@@ -1,0 +1,14 @@
+{
+  "useMarkdownLinks": true,
+  "showUnsupportedFiles": true,
+  "newLinkFormat": "relative",
+  "trashOption": "none",
+  "userIgnoreFilters": [
+    ".git/*"
+  ],
+  "newFileLocation": "current",
+  "attachmentFolderPath": "./attachments",
+  "alwaysUpdateLinks": true,
+  "useTab": false,
+  "showInlineTitle": false
+}
