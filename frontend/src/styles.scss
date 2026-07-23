@@ -1,1 +1,51 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* CSS color variables */
+:root {
+    --background-color: #1d1e56;
+    --text-color: white;
+    --border-color: gray;
+
+    --controls-background-color: #d8ca60;
+    --controls-hover-background-color: #c8ba50;
+    --controls-active-background-color: #b8aa40;
+    --controls-disabled-background-color: gray;
+    --controls-text-color: black;
+
+    --header-color: #0d0e36;
+}
+
+/* Global style defaults */
+:root {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+    font-family: sans-serif;
+}
+
+body {
+    margin: 0px;
+}
+
+button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+
+    background-color: var(--controls-background-color);
+    color: var(--controls-text-color);
+
+    &:hover {
+        background-color: var(--controls-hover-background-color);
+    }
+
+    &:active {
+        background-color: var(--controls-active-background-color);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        background-color: var(--controls-disabled-background-color);
+    }
+}
