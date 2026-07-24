@@ -1,0 +1,36 @@
+.description-text {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin: 5px 0px;
+}
+
+.button-line * {
+    margin-right: 5px;
+
+    &:last-child {
+        margin-right: 0px;
+    }
+}
+
+.grid-data {
+    max-height: 400px;
+    overflow-y: auto;
+
+    .row {
+        display: flex;
+        padding: 5px;
+        border: 1px solid var(--border-color);
+        align-items: center;
+
+        .row-data {
+            display: flex;
+            flex: 1;
+            align-items: center;
+        }
+
+        &:hover {
+            background-color: var(--header-color);
+        }
+    }
+}

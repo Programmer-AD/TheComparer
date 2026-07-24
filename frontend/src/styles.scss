@@ -49,3 +49,24 @@ button {
         background-color: var(--controls-disabled-background-color);
     }
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 5px 0px;
+}
+
+.icon-image {
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    overflow: hidden;
+}
+
+.invisible {
+    visibility: hidden;
+}

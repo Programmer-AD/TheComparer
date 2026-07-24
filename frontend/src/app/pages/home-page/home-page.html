@@ -1,1 +1,57 @@
-<p>home-page works!</p>
+<div class="description-text">
+    Welcome to "The Comparer". This is an utility which helps to find out your hidden preferences using set of simple comparsions.
+</div>
+<div>
+    <h2>Item packs</h2>
+    <div class="button-line">
+        <button (click)="onCreateNewPackClick()">Create new pack</button>
+        <button (click)="onImportPackClick()">Import pack</button>
+    </div>
+    <div class="grid-data">
+        @for (itemPack of itemPacks(); track itemPack.id){
+        <div class="row" (click)="onPackRowClick(itemPack)">
+            <div class="row-data">
+                <img class="icon-image" [class.invisible]="itemPack.icon === undefined" alt="Item pack icon" [src]="itemPack.icon" />
+                <span>
+                    <strong>{{ itemPack.name }}</strong>
+                    <span> by </span>
+                    <strong>{{ itemPack.author ?? "Unknown author" }}</strong>
+                </span>
+            </div>
+            <div class="row-actions button-line">
+                <button (click)="onEditPackClick($event, itemPack)">Edit</button>
+                <button (click)="onDownloadPackClick($event, itemPack)">Download</button>
+                <button (click)="onDeleteClick($event, itemPack)">Delete</button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+<div>
+    <h2>Sessions</h2>
+    <div>
+        <select (input)="onSessionFilterSelectionChange($event)">
+            <option selected value="0">All</option>
+            <option value="1">Unfinished</option>
+            <option value="2">Finished</option>
+        </select>
+    </div>
+    <div class="grid-data">
+        @for (comparisonSession of filteredComparisonSessions(); track comparisonSession.id){
+        <div class="row" (click)="onSessionRowClick(comparisonSession)">
+            <div class="row-data">
+                <span>
+                    <strong>"{{ comparisonSession.comparisonQuestion }}"</strong>
+                    <span> from </span>
+                    <strong>{{ comparisonSession.startDate.toISOString() }}</strong>
+                    @if (comparisonSession.endDate !== undefined){
+                    <span> (Finished at </span>
+                    <strong>{{ comparisonSession.endDate.toISOString() }}</strong>
+                    <span>)</span>
+                    }
+                </span>
+            </div>
+        </div>
+        }
+    </div>
+</div>
