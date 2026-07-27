@@ -14,8 +14,10 @@
                 <img class="icon-image" [class.invisible]="itemPack.icon === undefined" alt="Item pack icon" [src]="itemPack.icon" />
                 <span>
                     <strong>{{ itemPack.name }}</strong>
+                    @if (itemPack.author !== undefined){
                     <span> by </span>
-                    <strong>{{ itemPack.author ?? "Unknown author" }}</strong>
+                    <strong>{{ itemPack.author }}</strong>
+                    }
                 </span>
             </div>
             <div class="row-actions button-line">
