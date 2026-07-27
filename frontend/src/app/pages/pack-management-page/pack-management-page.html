@@ -1,1 +1,30 @@
-<p>pack-management-page works!</p>
+<div>
+    <h2>Item pack</h2>
+    <div>
+        <label>Name: {{packProperties.name()}}</label>
+        <!-- TODO: make custom input components which use model -->
+        <input [value]="packProperties.name()" (input)="packProperties.name.set($event.target.value)" />
+    </div>
+</div>
+<div>
+    <h2>Items</h2>
+    <div class="button-line">
+        <button (click)="onAddItemClick()">Add item</button>
+    </div>
+    <!---
+    <div class="grid-data">
+        @for (item of itemPack().items; track item.id){
+        <div class="row" (click)="onItemRowClick(item)">
+            <div class="row-data">
+                <img class="icon-image" [class.invisible]="item.icon" alt="Item icon" [src]="item.icon" />
+                <span>
+                    <strong>{{ item.name }}</strong>
+                </span>
+            </div>
+            <div class="row-actions button-line">
+                <button (click)="onDeleteItemClick($event, item)">Delete</button>
+            </div>
+        </div>
+        }
+    </div>-->
+</div>
