@@ -80,7 +80,7 @@ export class HomePage {
         this.fileInteractionService.downloadFile(`${itemPack.id}.pack`, data);
     }
 
-    protected onDeleteClick(event: Event, itemPack: ItemPack) {
+    protected onDeletePackClick(event: Event, itemPack: ItemPack) {
         event.stopPropagation();
 
         if (confirm(`Are you sure you want to delete item pack "${itemPack.name}"?`)) {
