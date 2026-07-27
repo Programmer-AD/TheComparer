@@ -1,16 +1,18 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { PageSetupService } from '../../utils/page-setup-service';
+import { Component, effect, inject } from '@angular/core';
+import { PageSetupService } from '../../utils';
 
 @Component({
-  selector: 'app-comparison-start-page',
-  imports: [],
-  templateUrl: './comparison-start-page.html',
-  styleUrl: './comparison-start-page.scss',
+    selector: 'app-comparison-start-page',
+    imports: [],
+    templateUrl: './comparison-start-page.html',
+    styleUrl: './comparison-start-page.scss',
 })
-export class ComparisonStartPage implements OnInit {
-  private pageSetupService = inject(PageSetupService);
+export class ComparisonStartPage {
+    private pageSetupService = inject(PageSetupService);
 
-  ngOnInit(): void {
-    this.pageSetupService.setupPage("Setup comparison", "/");
-  }
+    constructor() {
+        effect(() => {
+            this.pageSetupService.setupPage("Setup comparison", "/");
+        })
+    }
 }
