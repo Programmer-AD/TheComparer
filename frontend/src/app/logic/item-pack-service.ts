@@ -11,7 +11,8 @@ export class ItemPackService {
             author: "Mock author",
             description: "Description mock",
             questions: [
-                "Test question"
+                "Test question",
+                "Test question 2"
             ],
             items: []
         },
@@ -43,6 +44,16 @@ export class ItemPackService {
         });
     }
 
+    public update(updatedItemPack: ItemPack): void {
+        const existingItemPack = this.getById(updatedItemPack.id);
+        if (existingItemPack === undefined) {
+            throw new Error(`Item pack with id "${updatedItemPack.id}" was not found on update`);
+        }
+
+        // Mutate update
+        Object.assign(existingItemPack, updatedItemPack);
+    }
+
     public delete(id: string): void {
         const index = this.mockData.findIndex(x => x.id === id);
         if (index > 0) {
@@ -53,7 +64,7 @@ export class ItemPackService {
     public export(id: string): string {
         const model = this.getById(id);
         if (model === undefined) {
-            throw new Error(`Item with id "${id}" was not found on export`);
+            throw new Error(`Item pack with id "${id}" was not found on export`);
         }
 
         const data = JSON.stringify(model);

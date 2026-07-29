@@ -11,12 +11,19 @@ export class ImageInputComponent {
   private fileInteractionService = inject(FileInteractionService);
 
   public value = model<string>();
-  public width = input<number>(300);
-  public height = input<number>(300);
+  public imageWidth = input.required<number>();
+  public imageHeight = input.required<number>();
 
   protected canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
   private canvasElement = computed(() => this.canvasRef()?.nativeElement);
-  private canvasContext = computed(() => this.canvasElement()?.getContext('2d') || undefined);
+  private canvasContext = computed(() => {
+    try {
+      return this.canvasElement()?.getContext('2d') || undefined;
+    } catch (error) {
+      // Swallow context allocation error caused by SSR (it throws error instead of returning null)
+      return undefined;
+    }
+  });
   protected isImageSelectionSupported = computed(() => this.canvasContext() !== undefined);
 
   public constructor() {
@@ -54,27 +61,32 @@ export class ImageInputComponent {
   }
 
   private async renderImage(dataUrl: string | undefined): Promise<boolean> {
-    const canvas = this.canvasElement();
-    const context = this.canvasContext();
-    if (canvas === undefined || context === undefined) {
+    try {
+      const canvas = this.canvasElement();
+      const context = this.canvasContext();
+      if (canvas === undefined || context === undefined) {
+        return false;
+      }
+
+      if (dataUrl !== undefined) {
+        const image = new Image(canvas.width, canvas.height);
+        image.src = dataUrl;
+        const isLoaded = await new Promise((resolve, _) => {
+          image.onerror = () => resolve(false);
+          image.onload = () => resolve(true);
+        });
+
+        if (isLoaded) {
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          return true;
+        }
+      }
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      return false;
+    } catch (error) {
+      console.dir(error);
       return false;
     }
-
-    if (dataUrl !== undefined) {
-      const image = new Image(canvas.width, canvas.height);
-      image.src = dataUrl;
-      const isLoaded = await new Promise((resolve, _) => {
-        image.onerror = () => resolve(false);
-        image.onload = () => resolve(true);
-      });
-
-      if (isLoaded) {
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        return true;
-      }
-    }
-
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    return false;
   }
 }
