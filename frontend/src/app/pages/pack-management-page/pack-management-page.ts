@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { CustomNavigationService, PageSetupService } from '../../utils';
 import { ItemPackService } from '../../logic';
 import { Item } from '../../models';
+import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent } from "../../components";
 
 @Component({
     selector: 'app-pack-management-page',
-    imports: [],
+    imports: [ShortTextInputComponent, LongTextInputComponent, ImageInputComponent],
     templateUrl: './pack-management-page.html',
     styleUrl: './pack-management-page.scss',
 })
@@ -19,6 +20,7 @@ export class PackManagementPage {
     // From route
     public itemPackId = input.required<string>();
 
+    _temp = signal<number>(0);
     protected packProperties = {
         name: signal<string>(""),
         author: signal<string>(""),

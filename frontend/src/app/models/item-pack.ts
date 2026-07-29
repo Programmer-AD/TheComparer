@@ -7,7 +7,7 @@ export interface ItemPack {
     author?: string;
     icon?: string;
     description?: string;
-    questions: string[];
 
+    questions: string[];
     items: Item[];
 }

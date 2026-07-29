@@ -59,6 +59,29 @@ h6 {
     margin: 5px 0px;
 }
 
+textarea {
+    width: 400px;
+    border-radius: 5px;
+    border-color: var(--border-color);
+    padding: 5px;
+    margin: 0px;
+    height: 100px;
+    resize: none;
+}
+
+input {
+    width: 400px;
+    border-radius: 5px;
+    border-color: var(--border-color);
+    padding: 5px;
+    margin: 0px;
+
+    &[type=number] {
+        width: 200px;
+    }
+}
+
+/* Shared classes */
 .icon-image {
     min-width: 40px;
     max-width: 40px;
@@ -104,6 +127,19 @@ h6 {
 
         &:hover {
             background-color: var(--header-color);
+        }
+    }
+}
+
+.form-row {
+    margin: 5px 0px;
+
+    label {
+        display: block;
+        margin-left: 2px;
+
+        &::after {
+            content: ":";
         }
     }
 }

@@ -1,0 +1,7 @@
+<div [style.display]="isImageSelectionSupported() ? 'inline-block': 'none'">
+    <canvas #canvas [width]="width()" [height]="height()" (click)="onCanvasClick()"></canvas>
+    <button class="clear-button" [style.left]="width() + 'px'" (click)="onClearClick()">X</button>
+</div>
+@if (!isImageSelectionSupported()) {
+<div>Image selection is not supported by your browser!</div>
+}
