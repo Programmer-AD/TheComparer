@@ -80,7 +80,6 @@ export class PackManagementPage {
         };
 
         this.itemPackService.upsertAsync(updatedItemPack);
-        this.initFormDataAsync();
 
         alert("Saved successfully");
     }
