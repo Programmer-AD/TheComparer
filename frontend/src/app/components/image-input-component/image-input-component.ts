@@ -17,12 +17,7 @@ export class ImageInputComponent {
     protected canvasRef = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
     private canvasElement = computed(() => this.canvasRef()?.nativeElement);
     private canvasContext = computed(() => {
-        try {
-            return this.canvasElement()?.getContext('2d') || undefined;
-        } catch (error) {
-            // Swallow context allocation error caused by SSR (it throws error instead of returning null)
-            return undefined;
-        }
+        return this.canvasElement()?.getContext('2d') || undefined;
     });
     protected isImageSelectionSupported = computed(() => this.canvasContext() !== undefined);
 
