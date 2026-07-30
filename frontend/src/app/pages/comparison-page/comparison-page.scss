@@ -1,0 +1,28 @@
+.comparison-state-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+
+    .comparison-question {
+        font-size: x-large;
+        text-decoration: underline;
+    }
+
+    .comparison-progress-numbers {
+        font-size: small;
+        font-style: italic;
+    }
+}
+
+.comparison-area {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+
+    .equals-button-container {
+        padding: 10px;
+        align-self: center;
+    }
+}

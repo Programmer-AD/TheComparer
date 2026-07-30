@@ -1,13 +1,20 @@
+import { ComparisonSession, Item } from "../../models";
 import { ComparisonMode } from "./comparison-mode";
 
-export class TournamentMode implements ComparisonMode {
-    public id: string = "tournament";
-    public name: string = "Tournament";
-    public description: string = [
-        "Tournament mode is mode where items are compared like teams on tournament - winners go to next round and compared with each other, while others get dropped.",
-        "It is suitable to find the best item and track other preferences.",
-        "This mode does not provide real rating-like evaluation since it could be that all items in one semi-finalist path would be worse then all in another one which makes it a uneven."
-    ].join(" ");
+export class TournamentMode extends ComparisonMode {
+    public constructor() {
+        super(
+            "tournament",
+            "Tournament",
+            [
+                "Tournament mode is mode where items are compared like teams on tournament - winners go to next round and compared with each other, while others get dropped.",
+                "It is suitable to find the best item and track other preferences.",
+                "This mode does not provide real rating-like evaluation since it could be that all items in one semi-finalist path would be worse then all in another one which makes it a uneven."
+            ],
+            false,
+        );
+    }
+
 
     public estimateComparisonCount(itemCount: number): number | undefined {
         if (itemCount < 2) {
@@ -24,5 +31,11 @@ export class TournamentMode implements ComparisonMode {
         }
 
         return estimate;
+    }
+
+    public async getItemsToCompareAsync(comparisonSession: ComparisonSession): Promise<[Item, Item] | undefined> {
+        // TODO: Implment
+        const itemPack = await this.getItemPackAsync(comparisonSession.itemPackId);
+        return [itemPack.items[0], itemPack.items[1]];
     }
 }

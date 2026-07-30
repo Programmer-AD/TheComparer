@@ -14,6 +14,10 @@ export interface ComparisonSession {
 }
 
 export interface ComparisonSessionSelection {
+    /**
+     * If set to undefined - means "Equals" selection.
+     */
+    selectedItemId: string | undefined;
+
     optionItemIds: string[];
-    selectedIndex: number;
 }

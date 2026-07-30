@@ -1,1 +1,20 @@
-<p>comparison-page works!</p>
+<div class="comparison-state-container">
+    <div class="comparison-question">{{ comparisonSession().comparisonQuestion }}</div>
+    <progress [value]="completedComparisonCount()" [max]="estimatedTotalComparisonCount()"></progress>
+    <div class="comparison-progress-numbers">{{ completedComparisonCount() }} / {{ estimatedTotalComparisonCount() }}</div>
+</div>
+<div class="comparison-area">
+    @if (firstItem() !== undefined){
+    <app-comparison-item-component [item]="firstItem()!" (click)="onSelectionClick($event)" />
+    }
+
+    @if (comparisonMode()?.allowsEqual){
+    <div class="equals-button-container">
+        <button (click)="onSelectionClick(undefined)">Equal</button>
+    </div>
+    }
+
+    @if (secondItem() !== undefined){
+    <app-comparison-item-component [item]="secondItem()!" (click)="onSelectionClick($event)" />
+    }
+</div>

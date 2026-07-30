@@ -13,7 +13,7 @@
     --controls-disabled-background-color: gray;
     --controls-text-color: black;
 
-    --header-color: #0d0e36;
+    --secondary-color: #0d0e36;
 }
 
 /* Global style defaults */
@@ -83,6 +83,11 @@ select {
     }
 }
 
+progress {
+    height: 20px;
+    accent-color: var(--controls-active-background-color);
+}
+
 /* Shared classes */
 @mixin strict-size($width, $height) {
     min-width: $width;
@@ -100,6 +105,9 @@ select {
     @include strict-size(100px, 100px);
 }
 
+.full-image {
+    @include strict-size(300px, 300px);
+}
 
 .invisible {
     visibility: hidden;
@@ -137,7 +145,7 @@ select {
         }
 
         &:hover {
-            background-color: var(--header-color);
+            background-color: var(--secondary-color);
         }
     }
 }
