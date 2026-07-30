@@ -26,3 +26,10 @@
         align-self: center;
     }
 }
+
+@media (max-width: 900px) {
+    .comparison-area {
+        flex-direction: column;
+        align-items: center;
+    }
+}

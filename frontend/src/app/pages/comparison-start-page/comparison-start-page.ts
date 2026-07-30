@@ -47,7 +47,7 @@ export class ComparisonStartPage {
             comparisonQuestion: this.selectedQuestion() === "" ? this.customQuestion() : this.selectedQuestion(),
             startDate: new Date(),
             selections: [],
-            customItemStates: {},
+            customModeData: undefined,
         });
 
         this.router.navigate(["comparison", sessionId]);

@@ -1,4 +1,4 @@
-import { ComparisonSession, Item } from "../../models";
+import { ComparisonSession, ComparisonSessionSelection, Item, ItemPack } from "../../models";
 import { ComparisonMode } from "./comparison-mode";
 
 export class EloRankingMode extends ComparisonMode {
@@ -25,9 +25,17 @@ export class EloRankingMode extends ComparisonMode {
         return this.roundCount * itemCount / 2;
     }
 
-    public async getItemsToCompareAsync(comparisonSession: ComparisonSession): Promise<[Item, Item] | undefined> {
+    protected getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] {
         // TODO: Implment
-        const itemPack = await this.getItemPackAsync(comparisonSession.itemPackId);
         return [itemPack.items[0], itemPack.items[1]];
+
+    }
+
+    protected handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void {
+
+    }
+
+    protected override ensureCustomModeDataInited(comparisonSession: ComparisonSession): void {
+        comparisonSession.customModeData = {};
     }
 }

@@ -10,7 +10,7 @@ export interface ComparisonSession {
     comparisonMode: string;
 
     selections: ComparisonSessionSelection[];
-    customItemStates: unknown;
+    customModeData: unknown | undefined;
 }
 
 export interface ComparisonSessionSelection {

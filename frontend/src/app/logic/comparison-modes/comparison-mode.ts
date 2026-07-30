@@ -22,26 +22,66 @@ export abstract class ComparisonMode {
         this.allowsEqual = allowsEquals;
     }
 
-    abstract estimateComparisonCount(itemCount: number): number | undefined;
+    public abstract estimateComparisonCount(itemCount: number): number | undefined;
 
-    abstract getItemsToCompareAsync(comparisonSession: ComparisonSession): Promise<[Item, Item] | undefined>;
-
-    public async getProgressAsync(comparisonSession: ComparisonSession): Promise<{ completed: number, estimatedTotal: number }> {
+    public async getComparisonStateAsync(comparisonSession: ComparisonSession): Promise<ComparisonState> {
         const itemPack = await this.getItemPackAsync(comparisonSession.itemPackId);
 
+        if (comparisonSession.customModeData === undefined) {
+            this.ensureCustomModeDataInited(comparisonSession);
+        }
+
+        const itemsToCompare = this.getItemsToCompare(comparisonSession, itemPack);
+        const estimatedTotalComparisons = this.estimateComparisonCount(itemPack.items.length) ?? -1;
+        const completedComparisons = comparisonSession.selections.length;
+
         return ({
-            completed: comparisonSession.selections.length,
-            estimatedTotal: this.estimateComparisonCount(itemPack.items.length) ?? -1,
+            estimatedTotalComparisons: estimatedTotalComparisons,
+            completedComparisons: completedComparisons,
+            items: itemsToCompare,
         });
     }
 
     public async setSelectionAsync(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): Promise<void> {
+        const itemPack = await this.getItemPackAsync(comparisonSession.itemPackId);
+
         // We can mutate selections since they are not shown on UI on this stage
         comparisonSession.selections.push(selection);
-        await this.saveComparisonSessionAsync(comparisonSession);
+
+        // Do handling related to selection (if any)
+        this.handleSelection(comparisonSession, selection);
+
+        const estimatedTotalComparisons = this.estimateComparisonCount(itemPack.items.length) ?? -1;
+        const completedComparisons = comparisonSession.selections.length;
+
+        // Mark as done if this was last selection
+        if (completedComparisons >= estimatedTotalComparisons && comparisonSession.endDate === undefined) {
+            comparisonSession.endDate = new Date();
+        }
+
+        await this.comparisonSessionService.upsertAsync(comparisonSession);
     };
 
-    protected async getItemPackAsync(itemPackId: string): Promise<ItemPack> {
+    protected abstract getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item];
+
+    protected abstract handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void;
+
+    protected abstract ensureCustomModeDataInited(comparisonSession: ComparisonSession): void;
+
+    protected getItem(itemPack: ItemPack, id: string): Item {
+        const result = itemPack.items.find(x => x.id === id);
+        if (result === undefined) {
+            throw new Error(`Item with id "${id}" was not found in pack "${itemPack.id}`);
+        }
+
+        return result;
+    }
+
+    protected getRandomItem(items: Item[]): Item {
+        return items[Math.floor(Math.random() * items.length)];
+    }
+
+    private async getItemPackAsync(itemPackId: string): Promise<ItemPack> {
         const itemPack = await this.itemPackService.getByIdAsync(itemPackId);
         if (itemPack === undefined) {
             throw new Error(`Active item pack "${itemPackId}" was not found. Maybe it was concurrently removed?`);
@@ -49,8 +89,10 @@ export abstract class ComparisonMode {
 
         return itemPack;
     }
+}
 
-    protected saveComparisonSessionAsync(comparisonSession: ComparisonSession): Promise<void> {
-        return this.comparisonSessionService.upsertAsync(comparisonSession);
-    }
+export interface ComparisonState {
+    estimatedTotalComparisons: number;
+    completedComparisons: number;
+    items: [Item, Item];
 }

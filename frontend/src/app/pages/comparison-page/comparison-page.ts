@@ -28,8 +28,7 @@ export class ComparisonPage {
         effect(async () => {
             this.pageSetupService.setupPage(`Comparing items from "${this.comparisonSession().itemPackName}"`, "/");
 
-            await this.refreshComparisonItemsAsync();
-            await this.refreshProgressAsync();
+            await this.refreshComparisonStateAsync();
         });
     }
 
@@ -40,33 +39,21 @@ export class ComparisonPage {
             optionItemIds: [this.firstItem()!.id, this.secondItem()!.id]
         });
 
-        await this.refreshSelectionAsync();
+        await this.refreshComparisonStateAsync();
     }
 
-    private refreshSelectionAsync() {
-        return Promise.all([
-            this.refreshComparisonItemsAsync(),
-            this.refreshProgressAsync()
-        ]);
-    }
+    private async refreshComparisonStateAsync(): Promise<void> {
+        const comparisonState = await this.comparisonMode().getComparisonStateAsync(this.comparisonSession());
 
-    private async refreshComparisonItemsAsync(): Promise<void> {
-        const items = await this.comparisonMode().getItemsToCompareAsync(this.comparisonSession());
-
-        if (items === undefined) {
-            // If no pair - comparisons ended
+        if (comparisonState.completedComparisons >= comparisonState.estimatedTotalComparisons) {
+            // If all comparisons are done - go to result
             this.router.navigate(["comparison", this.comparisonSession().id, "result"]);
             return;
         }
 
-        this.firstItem.set(items[0]);
-        this.secondItem.set(items[1]);
-    }
-
-    private async refreshProgressAsync(): Promise<void> {
-        const progress = await this.comparisonMode().getProgressAsync(this.comparisonSession());
-
-        this.completedComparisonCount.set(progress.completed);
-        this.estimatedTotalComparisonCount.set(progress.estimatedTotal);
+        this.firstItem.set(comparisonState.items[0]);
+        this.secondItem.set(comparisonState.items[1]);
+        this.completedComparisonCount.set(comparisonState.completedComparisons);
+        this.estimatedTotalComparisonCount.set(comparisonState.estimatedTotalComparisons);
     }
 }
