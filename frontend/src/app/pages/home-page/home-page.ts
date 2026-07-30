@@ -42,8 +42,10 @@ export class HomePage {
     constructor() {
         effect(async () => {
             this.pageSetupService.setupPage("Welcome to TheComparer", null);
-            this.refreshComparisonSessions();
-            await this.refreshItemPacksAsync();
+            await Promise.all([
+                this.refreshComparisonSessionsAsync(),
+                this.refreshItemPacksAsync()
+            ]);
         })
     }
 
@@ -102,8 +104,8 @@ export class HomePage {
         }
     }
 
-    private refreshComparisonSessions() {
-        const comparisonSessions = this.comparisonSessionService.getAll();
+    private async refreshComparisonSessionsAsync(): Promise<void> {
+        const comparisonSessions = await this.comparisonSessionService.getAllAsync();
         this.comparisonSessions.set(comparisonSessions);
     }
 

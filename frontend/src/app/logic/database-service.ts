@@ -22,7 +22,7 @@ export class DatabaseService {
     private async getStoreAsync<T>(name: string, allowEdit: boolean): Promise<DatabaseStoreWrapper<T>> {
         const db = await this.getDatabaseAsync();
         const transaction = db.transaction(name, allowEdit ? "readwrite" : "readonly");
-        const store = transaction.objectStore(this.itemPackStoreName);
+        const store = transaction.objectStore(name);
         return new DatabaseStoreWrapper<T>(store);
     }
 

@@ -1,5 +1,6 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { PageSetupService } from '../../utils';
+import { ComparisonSession } from '../../models';
 
 @Component({
     selector: 'app-comparison-page',
@@ -10,9 +11,11 @@ import { PageSetupService } from '../../utils';
 export class ComparisonPage {
     private pageSetupService = inject(PageSetupService);
 
+    public comparisonSession = input.required<ComparisonSession>();
+
     constructor() {
         effect(() => {
-            this.pageSetupService.setupPage("Comparing things", "/");
+            this.pageSetupService.setupPage(`Comparing pack "${this.comparisonSession().itemPackName}"`, "/");
         })
     }
 }

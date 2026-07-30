@@ -38,8 +38,8 @@ export class ComparisonStartPage {
         });
     }
 
-    protected onStartButtonClick() {
-        const sessionId = this.comparisonSessionService.create({
+    protected async onStartButtonClick() {
+        const sessionId = await this.comparisonSessionService.createAsync({
             id: "assigned by service",
             itemPackId: this.itemPack().id,
             itemPackName: this.itemPack().name,
