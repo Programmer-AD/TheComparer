@@ -40,52 +40,52 @@ export class HomePage {
     });
 
     constructor() {
-        effect(() => {
+        effect(async () => {
             this.pageSetupService.setupPage("Welcome to TheComparer", null);
             this.refreshComparisonSessions();
-            this.refreshItemPacks();
+            await this.refreshItemPacksAsync();
         })
     }
 
-    protected onCreateNewPackClick() {
-        this.itemPackService.createNew();
-        this.refreshItemPacks();
+    protected async onCreateNewPackClick(): Promise<void> {
+        await this.itemPackService.createNewAsync();
+        await this.refreshItemPacksAsync();
     }
 
-    protected async onImportPackClick() {
+    protected async onImportPackClick(): Promise<void> {
         const file = await this.fileInteractionService.selectFileAsync();
         if (file === undefined) {
             return;
         }
 
         const data = await file.text();
-        this.itemPackService.import(data);
-        this.refreshItemPacks();
+        await this.itemPackService.importAsync(data);
+        await this.refreshItemPacksAsync();
     }
 
-    protected onPackRowClick(itemPack: ItemPack) {
+    protected onPackRowClick(itemPack: ItemPack): void {
         this.router.navigate(["comparison/start", itemPack.id]);
     }
 
-    protected onEditPackClick(event: Event, itemPack: ItemPack) {
+    protected onEditPackClick(event: Event, itemPack: ItemPack): void {
         event.stopPropagation();
 
         this.router.navigate(["pack-management", itemPack.id]);
     }
 
-    protected onDownloadPackClick(event: Event, itemPack: ItemPack) {
+    protected async onDownloadPackClick(event: Event, itemPack: ItemPack): Promise<void> {
         event.stopPropagation();
 
-        const data = this.itemPackService.export(itemPack.id);
+        const data = await this.itemPackService.exportAsync(itemPack.id);
         this.fileInteractionService.downloadFile(`${itemPack.id}.pack`, data);
     }
 
-    protected onDeletePackClick(event: Event, itemPack: ItemPack) {
+    protected async onDeletePackClick(event: Event, itemPack: ItemPack): Promise<void> {
         event.stopPropagation();
 
         if (confirm(`Are you sure you want to delete item pack "${itemPack.name}"?`)) {
-            this.itemPackService.delete(itemPack.id);
-            this.refreshItemPacks();
+            await this.itemPackService.deleteAsync(itemPack.id);
+            this.refreshItemPacksAsync();
         }
     }
 
@@ -107,8 +107,8 @@ export class HomePage {
         this.comparisonSessions.set(comparisonSessions);
     }
 
-    private refreshItemPacks() {
-        const itemPacks = this.itemPackService.getAll();
+    private async refreshItemPacksAsync(): Promise<void> {
+        const itemPacks = await this.itemPackService.getAllAsync();
         this.itemPacks.set(itemPacks);
     }
 }

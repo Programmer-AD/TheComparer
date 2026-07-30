@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, signal, WritableSignal } from '@angular/core';
-import { CustomNavigationService, PageSetupService } from '../../utils';
+import { PageSetupService } from '../../utils';
 import { ItemPackService } from '../../logic';
-import { Item, ItemPack } from '../../models';
+import { ItemPack } from '../../models';
 import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent } from "../../components";
 
 @Component({
@@ -12,11 +12,9 @@ import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, M
 })
 export class PackManagementPage {
     private pageSetupService = inject(PageSetupService);
-    private customNavigationService = inject(CustomNavigationService);
     private itemPackService = inject(ItemPackService);
 
-    // From route
-    public itemPackId = input.required<string>();
+    public itemPack = input.required<ItemPack>();
 
     protected packProperties = {
         name: signal<string>(""),
@@ -29,8 +27,8 @@ export class PackManagementPage {
     protected selectedItem = signal<MutableItemRow | undefined>(undefined);
 
     constructor() {
-        effect(() => {
-            this.initFormData();
+        effect(async () => {
+            await this.initFormDataAsync();
         })
     }
 
@@ -59,7 +57,7 @@ export class PackManagementPage {
         }
     }
 
-    protected onSaveButtonClick(): void {
+    protected async onSaveButtonClick(): Promise<void> {
         const questions = this.packProperties.questions()
             .replaceAll("\r", "")
             .split("\n")
@@ -67,7 +65,7 @@ export class PackManagementPage {
             .filter(x => x !== "");
 
         const updatedItemPack: ItemPack = {
-            id: this.itemPackId(),
+            id: this.itemPack().id,
             name: this.packProperties.name().trim(),
             author: makeUndefinedIfEmpty(this.packProperties.author().trim()),
             icon: this.packProperties.icon(),
@@ -81,19 +79,14 @@ export class PackManagementPage {
             })),
         };
 
-        this.itemPackService.update(updatedItemPack);
-        this.initFormData();
+        this.itemPackService.upsertAsync(updatedItemPack);
+        this.initFormDataAsync();
 
         alert("Saved successfully");
     }
 
-    private initFormData(): void {
-        const itemPack = this.itemPackService.getById(this.itemPackId());
-        if (itemPack === undefined) {
-            this.customNavigationService.showNotFoundPage();
-            return;
-        }
-
+    private async initFormDataAsync(): Promise<void> {
+        const itemPack = this.itemPack();
         this.pageSetupService.setupPage(`Manage pack "${itemPack.name}"`, "/");
 
         this.packProperties.name.set(itemPack.name);

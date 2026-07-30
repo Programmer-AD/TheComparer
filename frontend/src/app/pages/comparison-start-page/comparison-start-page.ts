@@ -1,9 +1,10 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
-import { CustomNavigationService, PageSetupService } from '../../utils';
-import { ComparisonMode, ComparisonModeService, ComparisonSessionService, ItemPackService } from '../../logic';
+import { PageSetupService } from '../../utils';
+import { ComparisonMode, ComparisonModeService, ComparisonSessionService } from '../../logic';
 import { SelectComponent } from "../../components/select-component/select-component";
 import { ShortTextInputComponent } from "../../components";
 import { Router } from '@angular/router';
+import { ItemPack } from '../../models';
 
 @Component({
     selector: 'app-comparison-start-page',
@@ -14,18 +15,10 @@ import { Router } from '@angular/router';
 export class ComparisonStartPage {
     private router = inject(Router);
     private pageSetupService = inject(PageSetupService);
-    private customNavigationService = inject(CustomNavigationService);
-    private itemPackService = inject(ItemPackService);
     private comparisonModeService = inject(ComparisonModeService);
     private comparisonSessionService = inject(ComparisonSessionService);
 
-    // From route
-    public itemPackId = input.required<string>();
-
-    // Just mock item if it is not found since we anyway would redirect in such case
-    protected itemPack = computed(
-        () => this.itemPackService.getById(this.itemPackId())
-            ?? { name: "", author: "", description: "", icon: "", items: [], questions: [] });
+    protected itemPack = input.required<ItemPack>();
     protected areEnoughItems = computed(() => this.itemPack().items.length >= 2);
 
     protected comparisonModes: ComparisonMode[] = this.comparisonModeService.getAll();
@@ -40,12 +33,7 @@ export class ComparisonStartPage {
     protected estimatedComparisonCount = computed(() => this.selectedComparisonMode()?.estimateComparisonCount(this.itemPack().items.length));
 
     constructor() {
-        effect(() => {
-            if (this.itemPack() === undefined) {
-                this.customNavigationService.showNotFoundPage();
-                return;
-            }
-
+        effect(async () => {
             this.pageSetupService.setupPage(`Setup comparison for "${this.itemPack().name}"`, "/");
         });
     }
@@ -53,7 +41,7 @@ export class ComparisonStartPage {
     protected onStartButtonClick() {
         const sessionId = this.comparisonSessionService.create({
             id: "assigned by service",
-            itemPackId: this.itemPackId(),
+            itemPackId: this.itemPack().id,
             itemPackName: this.itemPack().name,
             comparisonMode: this.selectedComparisonModeId(),
             comparisonQuestion: this.selectedQuestion() === "" ? this.customQuestion() : this.selectedQuestion(),

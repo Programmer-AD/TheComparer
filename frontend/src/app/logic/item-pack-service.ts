@@ -1,68 +1,47 @@
-import { Service } from '@angular/core';
-import { Item, ItemPack } from '../models';
+import { inject, Service } from '@angular/core';
+import { ItemPack } from '../models';
+import { DatabaseService } from '.';
 
 @Service()
 export class ItemPackService {
-    // TODO: Not implemented
-    private mockData: ItemPack[] = [
-        {
-            id: "test",
-            name: "Test pack mock",
-            author: "Mock author",
-            description: "Description mock",
-            questions: [
-                "Test question",
-                "Test question 2"
-            ],
-            items: []
-        },
-        {
-            id: "test 2",
-            name: "Test pack 2 mock",
-            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAA7UlEQVR4AeySMQ6CQBBF/64SGsQLGAoKGltqzqAF8ThwH0+gsaImxjMQO7uFhsRlXeIRZkxIHMILNP9n981oc0gdE8Yc06y+IasvMNUVjgONhT9yQOqAxKAYpBqg5mUHxSDVADUvOygGqQaoedlBDoO9L+FgcFZNWGGCwqAceg60L8s5cJMqnmHY4YUOAQqskHOg49MDHGzLO/blGZUfRzXi+53/iWi8bcuCsg3GXYIYiZ9IA4uWA+0vuOFBRQiUxhpzZwSApXcu813Lff/lgL+bgBikuhWDYpBqgJqXHRSDVAPUvOygGKQaoOY/AAAA///njMhGAAAABklEQVQDAGX0HVJyXuuXAAAAAElFTkSuQmCC",
-            questions: [
-                "Test question"
-            ],
-            items: []
-        }
-    ];
+    private databaseService = inject(DatabaseService);
 
-    public getAll(): ItemPack[] {
-        return [...this.mockData];
+    public async getAllAsync(): Promise<ItemPack[]> {
+        const store = await this.databaseService.getItemPackStoreAsync(false);
+        const result = await store.getAllAsync();
+        return result;
     }
 
-    public getById(id: string): ItemPack | undefined {
-        return this.mockData.find(x => x.id === id);
+    public async getByIdAsync(id: string): Promise<ItemPack | undefined> {
+        const store = await this.databaseService.getItemPackStoreAsync(false);
+        const result = await store.getByIdAsync(id);
+        return result;
     }
 
-    public createNew(): void {
-        this.mockData.push({
+    public async createNewAsync(): Promise<void> {
+        const newItem = {
             id: crypto.randomUUID(),
             name: "New item pack",
             questions: [],
             items: [],
-        });
+        };
+
+        const store = await this.databaseService.getItemPackStoreAsync(true);
+        await store.insertAsync(newItem);
     }
 
-    public update(updatedItemPack: ItemPack): void {
-        const existingItemPack = this.getById(updatedItemPack.id);
-        if (existingItemPack === undefined) {
-            throw new Error(`Item pack with id "${updatedItemPack.id}" was not found on update`);
-        }
-
-        // Mutate update
-        Object.assign(existingItemPack, updatedItemPack);
+    public async upsertAsync(updatedItemPack: ItemPack): Promise<void> {
+        const store = await this.databaseService.getItemPackStoreAsync(true);
+        await store.upsertAsync(updatedItemPack);
     }
 
-    public delete(id: string): void {
-        const index = this.mockData.findIndex(x => x.id === id);
-        if (index >= 0) {
-            this.mockData.splice(index, 1);
-        }
+    public async deleteAsync(id: string): Promise<void> {
+        const store = await this.databaseService.getItemPackStoreAsync(true);
+        await store.deleteAsync(id);
     }
 
-    public export(id: string): string {
-        const model = this.getById(id);
+    public async exportAsync(id: string): Promise<string> {
+        const model = await this.getByIdAsync(id);
         if (model === undefined) {
             throw new Error(`Item pack with id "${id}" was not found on export`);
         }
@@ -71,8 +50,8 @@ export class ItemPackService {
         return data;
     }
 
-    public import(data: string): void {
+    public async importAsync(data: string): Promise<void> {
         const model = JSON.parse(data);
-        this.mockData.push(model);
+        await this.upsertAsync(<ItemPack>model);
     }
 }
