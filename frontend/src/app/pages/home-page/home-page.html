@@ -44,6 +44,8 @@
             <div class="row-data">
                 <span>
                     <strong>"{{ comparisonSession.comparisonQuestion }}"</strong>
+                    <span> on </span>
+                    <strong>"{{comparisonSession.itemPackName}}"</strong>
                     <span> from </span>
                     <strong>{{ comparisonSession.startDate.toISOString() }}</strong>
                     @if (comparisonSession.endDate !== undefined){

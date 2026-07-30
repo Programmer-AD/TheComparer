@@ -1,21 +1,29 @@
+@let itemPackObj = this.itemPack();
 <div class="item-pack-info-container">
-    @if (itemPack.icon !== undefined){
-    <img class="big-icon-image" alt="Item icon" [src]="itemPack.icon" />
+    @if (itemPackObj.icon !== undefined){
+    <img class="big-icon-image" alt="Item icon" [src]="itemPackObj.icon" />
     }
     <div class="item-pack-info">
-        <div class="item-pack-name">{{ itemPack.name }}</div>
-        @if (itemPack.author !== undefined){
-        <div class="item-pack-author">by {{itemPack.author}}</div>
+        <div class="item-pack-name">{{ itemPackObj.name }}</div>
+        @if (itemPackObj.author !== undefined){
+        <div class="item-pack-author">by {{itemPackObj.author}}</div>
         }
-        @if (itemPack.description !== undefined){
-        <div class="item-pack-description">{{ itemPack.description }}</div>
+        @if (itemPackObj.description !== undefined){
+        <div class="item-pack-description">{{ itemPackObj.description }}</div>
         }
     </div>
 </div>
+
+@if (!areEnoughItems()) {
+<div class="not-enough-items-error">
+    At least 2 items required to start comparisons, but ideally you need 10+.
+</div>
+}
+
 <div class="comparison-setup-container">
     <div class="form-row">
         <label>Comparison mode</label>
-        <app-select-component [options]="comparisonModes.map(x => ({value: x.id, caption: x.name}))"></app-select-component>
+        <app-select-component [options]="comparisonModes.map(x => ({value: x.id, caption: x.name}))" [(value)]="selectedComparisonModeId"></app-select-component>
     </div>
     @let selectedComparisonModeObj = selectedComparisonMode();
     @if(selectedComparisonModeObj !== undefined){
@@ -30,5 +38,9 @@
         </div>
         }
     </div>
-    <button (click)="onStartButtonClick()">Start</button>
+    @if (estimatedComparisonCount() !== undefined){
+    <div class="esitmated-comparison-count">Estimated comparison count: {{ estimatedComparisonCount() }}</div>
+    }
+    <!-- If we can't produce estimate - we can't start (some params are wrong) -->
+    <button (click)="onStartButtonClick()" [disabled]="estimatedComparisonCount() === undefined">Start</button>
 </div>

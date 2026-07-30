@@ -1,12 +1,13 @@
 export interface ComparisonSession {
     id: string;
 
+    itemPackId: string;
+    itemPackName: string;
     startDate: Date;
     endDate?: Date;
     comparisonQuestion: string;
 
     comparisonMode: string;
-    customComparisonModeParams: unknown;
 
     selections: ComparisonSessionSelection[];
     customItemStates: unknown;

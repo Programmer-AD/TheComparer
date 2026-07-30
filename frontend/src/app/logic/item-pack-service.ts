@@ -56,7 +56,7 @@ export class ItemPackService {
 
     public delete(id: string): void {
         const index = this.mockData.findIndex(x => x.id === id);
-        if (index > 0) {
+        if (index >= 0) {
             this.mockData.splice(index, 1);
         }
     }

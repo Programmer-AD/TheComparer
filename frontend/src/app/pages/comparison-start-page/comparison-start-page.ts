@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { CustomNavigationService, PageSetupService } from '../../utils';
 import { ComparisonMode, ComparisonModeService, ComparisonSessionService, ItemPackService } from '../../logic';
-import { ItemPack } from '../../models';
 import { SelectComponent } from "../../components/select-component/select-component";
 import { ShortTextInputComponent } from "../../components";
 import { Router } from '@angular/router';
@@ -23,45 +22,46 @@ export class ComparisonStartPage {
     // From route
     public itemPackId = input.required<string>();
 
-    protected itemPack: ItemPack = undefined!;
+    // Just mock item if it is not found since we anyway would redirect in such case
+    protected itemPack = computed(
+        () => this.itemPackService.getById(this.itemPackId())
+            ?? { name: "", author: "", description: "", icon: "", items: [], questions: [] });
+    protected areEnoughItems = computed(() => this.itemPack().items.length >= 2);
+
     protected comparisonModes: ComparisonMode[] = this.comparisonModeService.getAll();
 
-    protected selectedComparisonModeId = signal<string>("");
+    protected selectedComparisonModeId = signal<string>(this.comparisonModes[0].id);
     protected selectedComparisonMode = computed(() => this.comparisonModeService.getById(this.selectedComparisonModeId()));
 
-    protected questionOptions = computed(() => this.itemPack.questions.map(x => ({ value: x, caption: x })).concat([{ value: "", caption: "Other" }]));
+    protected questionOptions = computed(() => this.itemPack().questions.map(x => ({ value: x, caption: x })).concat([{ value: "", caption: "Other" }]));
     protected selectedQuestion = signal<string>("");
-    protected customQuestion = signal<string>("");
+    protected customQuestion = signal<string>("What is better?");
+
+    protected estimatedComparisonCount = computed(() => this.selectedComparisonMode()?.estimateComparisonCount(this.itemPack().items.length));
 
     constructor() {
         effect(() => {
-            this.initFormData();
+            if (this.itemPack() === undefined) {
+                this.customNavigationService.showNotFoundPage();
+                return;
+            }
+
+            this.pageSetupService.setupPage(`Setup comparison for "${this.itemPack().name}"`, "/");
         });
     }
 
     protected onStartButtonClick() {
         const sessionId = this.comparisonSessionService.create({
             id: "assigned by service",
+            itemPackId: this.itemPackId(),
+            itemPackName: this.itemPack().name,
             comparisonMode: this.selectedComparisonModeId(),
             comparisonQuestion: this.selectedQuestion() === "" ? this.customQuestion() : this.selectedQuestion(),
             startDate: new Date(),
             selections: [],
-            customComparisonModeParams: {},
             customItemStates: {},
         });
 
         this.router.navigate(["comparison", sessionId]);
-    }
-
-    private initFormData(): void {
-        const itemPack = this.itemPackService.getById(this.itemPackId());
-        if (itemPack === undefined) {
-            this.customNavigationService.showNotFoundPage();
-            return;
-        }
-
-        this.itemPack = itemPack;
-
-        this.pageSetupService.setupPage(`Setup comparison for "${itemPack.name}"`, "/");
     }
 }

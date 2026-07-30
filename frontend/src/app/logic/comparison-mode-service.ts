@@ -1,9 +1,9 @@
 import { Service } from '@angular/core';
-import { ComparisonMode } from './comparison-modes';
+import { ComparisonMode, EloRankingMode, StickyMode, TournamentMode } from './comparison-modes';
 
 @Service()
 export class ComparisonModeService {
-    private modes = <ComparisonMode[]>[];
+    private modes = [new EloRankingMode(), new TournamentMode(), new StickyMode()];
 
     public getAll(): ComparisonMode[] {
         return this.modes;

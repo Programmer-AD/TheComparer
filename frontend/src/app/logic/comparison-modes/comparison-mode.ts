@@ -3,5 +3,5 @@ export interface ComparisonMode {
     name: string;
     description: string;
 
-    estimateComparisonCount(itemCount: number): number;
+    estimateComparisonCount(itemCount: number): number | undefined;
 }
