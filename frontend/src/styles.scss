@@ -69,7 +69,8 @@ textarea {
     resize: none;
 }
 
-input {
+input,
+select {
     width: 400px;
     border-radius: 5px;
     border-color: var(--border-color);
@@ -82,13 +83,22 @@ input {
 }
 
 /* Shared classes */
-.icon-image {
-    min-width: 40px;
-    max-width: 40px;
-    min-height: 40px;
-    max-height: 40px;
+@mixin strict-size($width, $height) {
+    min-width: $width;
+    max-width: $width;
+    min-height: $height;
+    max-height: $height;
     overflow: hidden;
 }
+
+.icon-image {
+    @include strict-size(40px, 40px);
+}
+
+.big-icon-image {
+    @include strict-size(100px, 100px);
+}
+
 
 .invisible {
     visibility: hidden;

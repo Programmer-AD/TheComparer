@@ -1,1 +1,34 @@
-<p>comparison-start-page works!</p>
+<div class="item-pack-info-container">
+    @if (itemPack.icon !== undefined){
+    <img class="big-icon-image" alt="Item icon" [src]="itemPack.icon" />
+    }
+    <div class="item-pack-info">
+        <div class="item-pack-name">{{ itemPack.name }}</div>
+        @if (itemPack.author !== undefined){
+        <div class="item-pack-author">by {{itemPack.author}}</div>
+        }
+        @if (itemPack.description !== undefined){
+        <div class="item-pack-description">{{ itemPack.description }}</div>
+        }
+    </div>
+</div>
+<div class="comparison-setup-container">
+    <div class="form-row">
+        <label>Comparison mode</label>
+        <app-select-component [options]="comparisonModes.map(x => ({value: x.id, caption: x.name}))"></app-select-component>
+    </div>
+    @let selectedComparisonModeObj = selectedComparisonMode();
+    @if(selectedComparisonModeObj !== undefined){
+    <div class="comparison-mode-description">{{selectedComparisonModeObj.description}}</div>
+    }
+    <div class="form-row">
+        <label>Question</label>
+        <app-select-component [options]="questionOptions()" [(value)]="selectedQuestion"></app-select-component>
+        @if (selectedQuestion() === ""){
+        <div>
+            <app-short-text-input-component [(value)]="customQuestion" />
+        </div>
+        }
+    </div>
+    <button (click)="onStartButtonClick()">Start</button>
+</div>

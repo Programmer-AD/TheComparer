@@ -30,7 +30,7 @@ export class PackManagementPage {
 
     constructor() {
         effect(() => {
-            this.getFormData();
+            this.initFormData();
         })
     }
 
@@ -82,12 +82,12 @@ export class PackManagementPage {
         };
 
         this.itemPackService.update(updatedItemPack);
-        this.getFormData();
+        this.initFormData();
 
         alert("Saved successfully");
     }
 
-    private getFormData(): void {
+    private initFormData(): void {
         const itemPack = this.itemPackService.getById(this.itemPackId());
         if (itemPack === undefined) {
             this.customNavigationService.showNotFoundPage();
