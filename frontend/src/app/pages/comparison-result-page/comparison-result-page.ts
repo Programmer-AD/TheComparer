@@ -15,7 +15,7 @@ export class ComparisonResultPage {
 
     constructor() {
         effect(() => {
-            this.pageSetupService.setupPage(`Result of comparing "${this.comparisonSession().itemPackName}"`, "/");
+            this.pageSetupService.setupPage(`Result for items from "${this.comparisonSession().itemPackName}"`, "/");
         })
     }
 }
