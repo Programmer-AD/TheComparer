@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { PageSetupService, FileInteractionService } from '../../utils';
-import { ComparisonSessionService, ItemPackService } from '../../logic';
+import { ComparisonModeService, ComparisonSessionService, ItemPackService } from '../../logic';
 import { ComparisonSession, ItemPack } from '../../models';
 import { Router } from '@angular/router';
 
@@ -15,6 +15,7 @@ export class HomePage {
     private pageSetupService = inject(PageSetupService);
     private fileInteractionService = inject(FileInteractionService);
     private comparisonSessionService = inject(ComparisonSessionService);
+    private comparisonModeService = inject(ComparisonModeService);
     private itemPackService = inject(ItemPackService);
 
     protected readonly itemPacks = signal<ItemPack[]>([]);
@@ -24,9 +25,11 @@ export class HomePage {
         const sessions = this.comparisonSessions();
         const sessionFilterValue = this.sessionFilterValue();
 
-        sessions.sort((a, b) => b.startDate.toISOString().localeCompare(a.startDate?.toISOString()));
+        const extendedSessions = sessions.map(x => ({ ...x, comparisonModeName: this.comparisonModeService.getById(x.comparisonMode)!.name }));
 
-        return sessions.filter(session => {
+        extendedSessions.sort((a, b) => b.startDate.toISOString().localeCompare(a.startDate?.toISOString()));
+
+        return extendedSessions.filter(session => {
             switch (sessionFilterValue) {
                 case 0:
                 default:

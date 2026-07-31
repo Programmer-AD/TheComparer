@@ -1,1 +1,36 @@
-<p>comparison-result-page works!</p>
+<div>
+    <h2>About session</h2>
+    <div>Mode: <strong>{{ comparisonMode().name }}</strong></div>
+    <div>Question: <strong>{{ comparisonSession().comparisonQuestion }}</strong></div>
+    <div>Item pack: <strong>{{ comparisonSession().itemPackName }}</strong></div>
+    <div>Started at: <strong>{{ comparisonSession().startDate.toISOString() }}</strong></div>
+    <div>Finished at: <strong>{{ comparisonSession().endDate!.toISOString() }}</strong></div>
+</div>
+<div>
+    <h2>Result</h2>
+    @switch (comparisonMode().id) {
+    @case (comparisonModeConstants.eloRankingModeId) {
+    <app-elo-ranking-mode-result-component [comparisonSession]="comparisonSession()" />
+    }
+    @case (comparisonModeConstants.stickyModeId) {
+    <app-sticky-mode-result-component [comparisonSession]="comparisonSession()" />
+    }
+    @case (comparisonModeConstants.tournamentModeId) {
+    <app-tournament-mode-result-component [comparisonSession]="comparisonSession()" />
+    }
+    }
+</div>
+<div>
+    <h2>Selections</h2>
+    <div class="grid-data">
+        @for (selectionRow of selectionRows(); track $index){
+        <div class="row">
+            <div class="row-data">
+                <app-comparison-item-selection-component [item]="selectionRow.firstItem" [isSelected]="selectionRow.isFirstSelected" />
+                <div>VS</div>
+                <app-comparison-item-selection-component [item]="selectionRow.secondItem" [isSelected]="selectionRow.isSecondSelected" />
+            </div>
+        </div>
+        }
+    </div>
+</div>

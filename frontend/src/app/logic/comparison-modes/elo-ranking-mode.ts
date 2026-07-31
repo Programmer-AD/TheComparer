@@ -1,9 +1,9 @@
+import { ComparisonModeConstants, ComparisonMode } from ".";
 import { ComparisonSession, ComparisonSessionSelection, Item, ItemPack } from "../../models";
 import { ArrayExtensions, MapExtensions } from "../extensions";
-import { ComparisonMode } from "./comparison-mode";
 
 export class EloRankingMode extends ComparisonMode {
-    // TODO: make configurable in next version
+    // This may be configurable in next version
     private readonly roundCount = 5;
     private readonly ratingCoefficient = 200;
     private readonly maxRatingDifference = 400;
@@ -11,7 +11,7 @@ export class EloRankingMode extends ComparisonMode {
 
     public constructor() {
         super(
-            "elo_ranking",
+            ComparisonModeConstants.eloRankingModeId,
             "ELO Ranking",
             [
                 "ELO Ranking is mode where the item rating is built using ELO System.",

@@ -43,8 +43,8 @@
         <div class="row" (click)="onSessionRowClick(comparisonSession)">
             <div class="row-data">
                 <span>
-                    <strong>"{{ comparisonSession.comparisonQuestion }}"</strong>
-                    <span> on </span>
+                    <strong>{{ comparisonSession.comparisonModeName }}</strong>
+                    <span> for </span>
                     <strong>"{{comparisonSession.itemPackName}}"</strong>
                     <span> from </span>
                     <strong>{{ comparisonSession.startDate.toISOString() }}</strong>

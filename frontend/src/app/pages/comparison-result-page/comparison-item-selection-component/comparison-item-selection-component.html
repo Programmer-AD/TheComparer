@@ -1,0 +1,11 @@
+<div class="compare-item" [class.compare-selected]="isSelected()">
+    @let itemObj = item();
+    @if (itemObj !== undefined){
+    @if (itemObj.icon !== undefined){
+    <img class="icon-image" alt="Item icon" [src]="itemObj.icon" />
+    }
+    <div>{{ itemObj.name }}</div>
+    } @else {
+    <div>Unknown item</div>
+    }
+</div>

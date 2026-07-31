@@ -17,12 +17,12 @@ export class ComparisonPage {
     private comparisonModeService = inject(ComparisonModeService);
 
     public comparisonSession = input.required<ComparisonSession>();
-    public comparisonMode = computed(() => this.comparisonModeService.getById(this.comparisonSession().comparisonMode)!);
+    protected comparisonMode = computed(() => this.comparisonModeService.getById(this.comparisonSession().comparisonMode)!);
 
-    public firstItem = signal<Item | undefined>(undefined);
-    public secondItem = signal<Item | undefined>(undefined);
-    public completedComparisonCount = signal<number>(0);
-    public estimatedTotalComparisonCount = signal<number>(0);
+    protected firstItem = signal<Item | undefined>(undefined);
+    protected secondItem = signal<Item | undefined>(undefined);
+    protected completedComparisonCount = signal<number>(0);
+    protected estimatedTotalComparisonCount = signal<number>(0);
 
     constructor() {
         effect(async () => {

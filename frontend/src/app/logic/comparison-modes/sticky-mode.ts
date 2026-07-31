@@ -1,14 +1,14 @@
+import { ComparisonModeConstants, ComparisonMode } from ".";
 import { ComparisonSession, ComparisonSessionSelection, Item, ItemPack } from "../../models";
 import { ArrayExtensions } from "../extensions";
-import { ComparisonMode } from "./comparison-mode";
 
 export class StickyMode extends ComparisonMode {
     public constructor() {
         super(
-            "sticky",
-            "Sticky",
+            ComparisonModeConstants.stickyModeId,
+            "Sticky compare",
             [
-                "Sticky mode is mode where the item that wins comparison stays for next round, but another one goes away forever.",
+                "Sticky compare mode is mode where the item that wins comparison stays for next round, but another one goes away forever.",
                 "It is suitable to find a single wining option in a fast way."
             ],
             false,

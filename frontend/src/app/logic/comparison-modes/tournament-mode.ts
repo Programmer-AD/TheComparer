@@ -1,11 +1,11 @@
+import { ComparisonModeConstants, ComparisonMode } from ".";
 import { ComparisonSession, ComparisonSessionSelection, Item, ItemPack } from "../../models";
 import { ArrayExtensions, MapExtensions } from "../extensions";
-import { ComparisonMode } from "./comparison-mode";
 
 export class TournamentMode extends ComparisonMode {
     public constructor() {
         super(
-            "tournament",
+            ComparisonModeConstants.tournamentModeId,
             "Tournament",
             [
                 "Tournament mode is mode where items are compared like teams on tournament - winners go to next round and compared with each other, while others get dropped.",

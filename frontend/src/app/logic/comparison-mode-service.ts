@@ -3,7 +3,11 @@ import { ComparisonMode, EloRankingMode, StickyMode, TournamentMode } from './co
 
 @Service()
 export class ComparisonModeService {
-    private modes = [new EloRankingMode(), new TournamentMode(), new StickyMode()];
+    private modes = [
+        new EloRankingMode(),
+        new TournamentMode(),
+        new StickyMode()
+    ];
 
     public getAll(): ComparisonMode[] {
         return this.modes;
