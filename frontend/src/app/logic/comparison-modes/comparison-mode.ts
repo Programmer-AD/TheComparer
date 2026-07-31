@@ -62,7 +62,7 @@ export abstract class ComparisonMode {
         await this.comparisonSessionService.upsertAsync(comparisonSession);
     };
 
-    protected abstract getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item];
+    protected abstract getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] | undefined;
 
     protected abstract handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void;
 
@@ -75,10 +75,6 @@ export abstract class ComparisonMode {
         }
 
         return result;
-    }
-
-    protected getRandomItem(items: Item[]): Item {
-        return items[Math.floor(Math.random() * items.length)];
     }
 
     private async getItemPackAsync(itemPackId: string): Promise<ItemPack> {
@@ -94,5 +90,5 @@ export abstract class ComparisonMode {
 export interface ComparisonState {
     estimatedTotalComparisons: number;
     completedComparisons: number;
-    items: [Item, Item];
+    items: [Item, Item] | undefined;
 }

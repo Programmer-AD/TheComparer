@@ -1,4 +1,5 @@
 import { ComparisonSession, ComparisonSessionSelection, Item, ItemPack } from "../../models";
+import { ArrayExtensions, MapExtensions } from "../extensions";
 import { ComparisonMode } from "./comparison-mode";
 
 export class TournamentMode extends ComparisonMode {
@@ -15,8 +16,7 @@ export class TournamentMode extends ComparisonMode {
         );
     }
 
-
-    public estimateComparisonCount(itemCount: number): number | undefined {
+    public override estimateComparisonCount(itemCount: number): number | undefined {
         if (itemCount < 2) {
             return undefined;
         }
@@ -33,24 +33,27 @@ export class TournamentMode extends ComparisonMode {
         return estimate;
     }
 
-    protected getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] {
+    protected override getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] | undefined {
         const customData = <TournamentModeCustomData>comparisonSession.customModeData;
 
         const remainingItems = itemPack.items.filter(x => !customData.rejectedItemIds.has(x.id));
-        if (remainingItems.length < 2) {
-            // That's an error, but we do not want to fail
-            return [itemPack.items[0], itemPack.items[0]];
-        }
-
         const firstItem = this.getRandomItemWithMinimalComparisons(remainingItems, customData);
+        if (firstItem === undefined) {
+            // This can occur only if all expected comparisons are done
+            return undefined;
+        }
 
         const remainingItemsForSecond = remainingItems.filter(x => x.id !== firstItem.id);
         const secondItem = this.getRandomItemWithMinimalComparisons(remainingItemsForSecond, customData);
+        if (secondItem === undefined) {
+            // This can occur only if all expected comparisons are done
+            return undefined;
+        }
 
         return [firstItem, secondItem];
     }
 
-    protected handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void {
+    protected override handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void {
         const customData = <TournamentModeCustomData>comparisonSession.customModeData;
 
         const rejectedItemIds = selection.optionItemIds.filter(x => x !== selection.selectedItemId);
@@ -59,23 +62,18 @@ export class TournamentMode extends ComparisonMode {
         }
 
         for (const itemId of selection.optionItemIds) {
-            const comparedTimes = customData.comparisonTimes.has(itemId)
-                ? customData.comparisonTimes.get(itemId)! + 1
-                : 1;
-
-            customData.comparisonTimes.set(itemId, comparedTimes);
+            MapExtensions.incrementValue(customData.comparisonTimes, itemId);
         }
     }
 
-    protected ensureCustomModeDataInited(comparisonSession: ComparisonSession): void {
+    protected override ensureCustomModeDataInited(comparisonSession: ComparisonSession): void {
         comparisonSession.customModeData = new TournamentModeCustomData();
     }
 
-    private getRandomItemWithMinimalComparisons(items: Item[], customData: TournamentModeCustomData): Item {
-        const minimalComparisons = items.map(x => customData.comparisonTimes.get(x.id) ?? 0).reduce((a, b) => Math.min(a, b));
-        console.log(minimalComparisons);
-        const itemsWithMinimalComparisons = items.filter(x => (customData.comparisonTimes.get(x.id) ?? 0) === minimalComparisons);
-        const item = this.getRandomItem(itemsWithMinimalComparisons);
+    private getRandomItemWithMinimalComparisons(items: Item[], customData: TournamentModeCustomData): Item | undefined {
+        const minimalComparisons = MapExtensions.getMinValue(customData.comparisonTimes, items.map(x => x.id), 0);
+        const itemsWithMinimalComparisons = items.filter(x => MapExtensions.getValueOrDefault(customData.comparisonTimes, x.id, 0) === minimalComparisons);
+        const item = ArrayExtensions.getRandomElement(itemsWithMinimalComparisons);
         return item;
     }
 }

@@ -45,7 +45,7 @@ export class ComparisonPage {
     private async refreshComparisonStateAsync(): Promise<void> {
         const comparisonState = await this.comparisonMode().getComparisonStateAsync(this.comparisonSession());
 
-        if (comparisonState.completedComparisons >= comparisonState.estimatedTotalComparisons) {
+        if (comparisonState.completedComparisons >= comparisonState.estimatedTotalComparisons || comparisonState.items === undefined) {
             // If all comparisons are done - go to result
             this.router.navigate(["comparison", this.comparisonSession().id, "result"]);
             return;

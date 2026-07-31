@@ -1,4 +1,5 @@
 import { ComparisonSession, ComparisonSessionSelection, Item, ItemPack } from "../../models";
+import { ArrayExtensions } from "../extensions";
 import { ComparisonMode } from "./comparison-mode";
 
 export class StickyMode extends ComparisonMode {
@@ -14,7 +15,7 @@ export class StickyMode extends ComparisonMode {
         );
     }
 
-    public estimateComparisonCount(itemCount: number): number | undefined {
+    public override estimateComparisonCount(itemCount: number): number | undefined {
         if (itemCount < 2) {
             return undefined;
         }
@@ -22,34 +23,35 @@ export class StickyMode extends ComparisonMode {
         return itemCount - 1;
     }
 
-    protected getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] {
+    protected override getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] | undefined {
         const customData = <StickModeCustomData>comparisonSession.customModeData;
-        const selections = comparisonSession.selections;
 
-        let firstItem;
-        if (selections.length === 0) {
-            firstItem = this.getRandomItem(itemPack.items);
-        } else {
-            const lastSelection = selections[selections.length - 1];
+        let firstItem: Item;
+        const lastSelection = ArrayExtensions.getLastElement(comparisonSession.selections);
+        if (lastSelection !== undefined) {
+            // If last selection exists - get selected item
             const lastSelectedItemId = lastSelection.selectedItemId;
             if (lastSelectedItemId === undefined) {
                 throw new Error("Sticky mode somehow had 'Equals' selection!");
             }
 
             firstItem = this.getItem(itemPack, lastSelectedItemId);
+        } else {
+            // If no last selection (when its first selection in session) - get random item
+            firstItem = ArrayExtensions.getRandomElement(itemPack.items)!;
         }
 
-        const notRejectedItems = itemPack.items.filter(x => !customData.rejectedItemIds.has(x.id) && x.id !== firstItem.id);
-        if (notRejectedItems.length === 0) {
-            // That's an error, but we do not want to fail
-            return [firstItem, firstItem];
+        const remainingItems = itemPack.items.filter(x => !customData.rejectedItemIds.has(x.id) && x.id !== firstItem.id);
+        const secondItem = ArrayExtensions.getRandomElement(remainingItems);
+        if (secondItem === undefined) {
+            // This can occur only if all expected comparisons are done
+            return undefined;
         }
 
-        const secondItem = this.getRandomItem(notRejectedItems);
         return [firstItem, secondItem];
     }
 
-    protected handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void {
+    protected override handleSelection(comparisonSession: ComparisonSession, selection: ComparisonSessionSelection): void {
         const customData = <StickModeCustomData>comparisonSession.customModeData;
 
         const rejectedItemIds = selection.optionItemIds.filter(x => x !== selection.selectedItemId);
@@ -58,7 +60,7 @@ export class StickyMode extends ComparisonMode {
         }
     }
 
-    protected ensureCustomModeDataInited(comparisonSession: ComparisonSession): void {
+    protected override ensureCustomModeDataInited(comparisonSession: ComparisonSession): void {
         comparisonSession.customModeData = new StickModeCustomData();
     }
 }
