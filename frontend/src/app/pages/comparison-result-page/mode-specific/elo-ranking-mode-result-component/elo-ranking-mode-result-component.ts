@@ -1,6 +1,6 @@
-import { Component, computed, input } from '@angular/core';
-import { ComparisonSession, Item, ItemPack } from '../../../../models';
-import { EloRatingModeCustomData } from '../../../../logic';
+import { Component, computed, inject, input } from '@angular/core';
+import { ComparisonSession, ItemPack } from '../../../../models';
+import { ComparisonModeConstants, ComparisonModeService, EloRatingModeResult } from '../../../../logic';
 
 @Component({
     selector: 'app-elo-ranking-mode-result-component',
@@ -9,23 +9,14 @@ import { EloRatingModeCustomData } from '../../../../logic';
     styleUrl: './elo-ranking-mode-result-component.scss',
 })
 export class EloRankingModeResultComponent {
+    private comparisonModeService = inject(ComparisonModeService);
+
     public comparisonSession = input.required<ComparisonSession>();
     public itemPack = input.required<ItemPack>();
 
-    protected itemRows = computed(() => this.getRows());
-
-    private getRows(): (Item & { rating: number })[] {
-        const comparisonSession = this.comparisonSession();
-        const itemPack = this.itemPack();
-        const modeData = <EloRatingModeCustomData>comparisonSession.customModeData;
-
-        const result = itemPack.items.map(item => {
-            const rating = modeData.itemRatings.get(item.id)!;
-            return ({ ...item, rating: rating });
-        });
-
-        result.sort((a, b) => b.rating - a.rating);
-
-        return result;
-    }
+    protected itemRows = computed(() => {
+        const mode = this.comparisonModeService.getById(ComparisonModeConstants.eloRankingModeId)!;
+        const result = mode.getResult(this.comparisonSession(), this.itemPack());
+        return <EloRatingModeResult>result;
+    });
 }

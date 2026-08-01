@@ -86,6 +86,19 @@ export class EloRankingMode extends ComparisonMode {
         customData.itemRatings.set(secondItemId, this.getNewEloRating(secondItemRating, firstItemRating, secondItemOutcome));
     }
 
+    public override getResult(comparisonSession: ComparisonSession, itemPack: ItemPack): EloRatingModeResult {
+        const modeData = <EloRatingModeCustomData>comparisonSession.customModeData;
+
+        const result = itemPack.items.map(item => {
+            const rating = modeData.itemRatings.get(item.id)!;
+            return ({ ...item, rating: rating });
+        });
+
+        result.sort((a, b) => b.rating - a.rating);
+
+        return result;
+    }
+
     protected override ensureCustomModeDataInited(comparisonSession: ComparisonSession): void {
         comparisonSession.customModeData = new EloRatingModeCustomData();
     }
@@ -110,7 +123,9 @@ export class EloRankingMode extends ComparisonMode {
     }
 }
 
-export class EloRatingModeCustomData {
+class EloRatingModeCustomData {
     public comparisonTimes = new Map<string, number>();
     public itemRatings = new Map<string, number>();
 }
+
+export type EloRatingModeResult = (Item & { rating: number })[];

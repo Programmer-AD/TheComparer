@@ -33,6 +33,17 @@ export class TournamentMode extends ComparisonMode {
         return estimate;
     }
 
+    public override getResult(comparisonSession: ComparisonSession, itemPack: ItemPack): TournamentModeResult {
+        const result = itemPack.items.map(item => {
+            const wonComparisons = comparisonSession.selections.filter(x => x.selectedItemId === item.id).length;
+            return ({ ...item, wonComparisons: wonComparisons });
+        });
+
+        result.sort((a, b) => b.wonComparisons - a.wonComparisons);
+
+        return result;
+    }
+
     protected override getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] | undefined {
         const customData = <TournamentModeCustomData>comparisonSession.customModeData;
 
@@ -82,3 +93,5 @@ class TournamentModeCustomData {
     public rejectedItemIds = new Set<string>();
     public comparisonTimes = new Map<string, number>();
 }
+
+export type TournamentModeResult = (Item & { wonComparisons: number })[];

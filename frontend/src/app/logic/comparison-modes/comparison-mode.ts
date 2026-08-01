@@ -24,6 +24,8 @@ export abstract class ComparisonMode {
 
     public abstract estimateComparisonCount(itemCount: number): number | undefined;
 
+    public abstract getResult(comparisonSession: ComparisonSession, itemPack: ItemPack): unknown;
+
     public async getComparisonStateAsync(comparisonSession: ComparisonSession): Promise<ComparisonState> {
         const itemPack = await this.getItemPackAsync(comparisonSession.itemPackId);
 

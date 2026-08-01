@@ -1,6 +1,6 @@
-import { Component, computed, input } from '@angular/core';
-import { ComparisonSession, Item, ItemPack } from '../../../../models';
-import { ArrayExtensions } from '../../../../logic';
+import { Component, computed, inject, input } from '@angular/core';
+import { ComparisonSession, ItemPack } from '../../../../models';
+import { ComparisonModeConstants, ComparisonModeService, StickyModeResult } from '../../../../logic';
 import { ComparisonItemComponent } from "../../../../components";
 
 @Component({
@@ -10,14 +10,15 @@ import { ComparisonItemComponent } from "../../../../components";
     styleUrl: './sticky-mode-result-component.scss',
 })
 export class StickyModeResultComponent {
+    private comparisonModeService = inject(ComparisonModeService);
+
     public comparisonSession = input.required<ComparisonSession>();
     public itemPack = input.required<ItemPack>();
 
-    protected winnerItem = computed(() => this.getWinnerItem());
+    protected winnerItem = computed(() => {
+        const mode = this.comparisonModeService.getById(ComparisonModeConstants.stickyModeId)!;
+        const result = mode.getResult(this.comparisonSession(), this.itemPack());
+        return <StickyModeResult>result;
+    });
 
-    private getWinnerItem(): Item | undefined {
-        const lastSelection = ArrayExtensions.getLastElement(this.comparisonSession().selections);
-        const itemThatStayed = this.itemPack().items.find(x => x.id === lastSelection?.selectedItemId);
-        return itemThatStayed;
-    }
 }

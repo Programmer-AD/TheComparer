@@ -1,5 +1,6 @@
-import { Component, computed, input } from '@angular/core';
-import { ComparisonSession, Item, ItemPack } from '../../../../models';
+import { Component, computed, inject, input } from '@angular/core';
+import { ComparisonSession, ItemPack } from '../../../../models';
+import { ComparisonModeConstants, ComparisonModeService, TournamentModeResult } from '../../../../logic';
 
 @Component({
     selector: 'app-tournament-mode-result-component',
@@ -8,22 +9,14 @@ import { ComparisonSession, Item, ItemPack } from '../../../../models';
     styleUrl: './tournament-mode-result-component.scss',
 })
 export class TournamentModeResultComponent {
+    private comparisonModeService = inject(ComparisonModeService);
+
     public comparisonSession = input.required<ComparisonSession>();
     public itemPack = input.required<ItemPack>();
 
-    protected itemRows = computed(() => this.getRows());
-
-    private getRows(): (Item & { wonComparisons: number })[] {
-        const comparisonSession = this.comparisonSession();
-        const itemPack = this.itemPack();
-
-        const result = itemPack.items.map(item => {
-            const wonComparisons = comparisonSession.selections.filter(x => x.selectedItemId === item.id).length;
-            return ({ ...item, wonComparisons: wonComparisons });
-        });
-
-        result.sort((a, b) => b.wonComparisons - a.wonComparisons);
-
-        return result;
-    }
+    protected itemRows = computed(() => {
+        const mode = this.comparisonModeService.getById(ComparisonModeConstants.tournamentModeId)!;
+        const result = mode.getResult(this.comparisonSession(), this.itemPack());
+        return <TournamentModeResult>result;
+    });
 }

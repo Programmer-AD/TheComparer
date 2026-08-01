@@ -23,6 +23,12 @@ export class StickyMode extends ComparisonMode {
         return itemCount - 1;
     }
 
+    public override getResult(comparisonSession: ComparisonSession, itemPack: ItemPack): StickyModeResult {
+        const lastSelection = ArrayExtensions.getLastElement(comparisonSession.selections);
+        const itemThatStayed = itemPack.items.find(x => x.id === lastSelection?.selectedItemId);
+        return itemThatStayed;
+    }
+
     protected override getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] | undefined {
         const customData = <StickModeCustomData>comparisonSession.customModeData;
 
@@ -65,6 +71,8 @@ export class StickyMode extends ComparisonMode {
     }
 }
 
-export class StickModeCustomData {
+class StickModeCustomData {
     public rejectedItemIds = new Set<string>();
 }
+
+export type StickyModeResult = Item | undefined;
