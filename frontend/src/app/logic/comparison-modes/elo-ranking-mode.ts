@@ -26,7 +26,7 @@ export class EloRankingMode extends ComparisonMode {
             return undefined;
         }
 
-        return this.roundCount * itemCount / 2;
+        return Math.ceil(this.roundCount * itemCount / 2);
     }
 
     protected override getItemsToCompare(comparisonSession: ComparisonSession, itemPack: ItemPack): [Item, Item] | undefined {
