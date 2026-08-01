@@ -65,6 +65,6 @@ export class StickyMode extends ComparisonMode {
     }
 }
 
-class StickModeCustomData {
+export class StickModeCustomData {
     public rejectedItemIds = new Set<string>();
 }

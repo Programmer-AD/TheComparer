@@ -110,7 +110,7 @@ export class EloRankingMode extends ComparisonMode {
     }
 }
 
-class EloRatingModeCustomData {
+export class EloRatingModeCustomData {
     public comparisonTimes = new Map<string, number>();
     public itemRatings = new Map<string, number>();
 }

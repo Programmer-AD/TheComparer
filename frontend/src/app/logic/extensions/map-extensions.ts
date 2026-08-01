@@ -12,7 +12,12 @@ export function getMinValue<TKey>(map: Map<TKey, number>, keysSubSet: TKey[], de
         return defaultValue;
     }
 
-    const result = keysSubSet.map(key => getValueOrDefault(map, key, defaultValue)).reduce((a, b) => Math.min(a, b));
+    const itemSubSet = keysSubSet.map(key => getValueOrDefault(map, key, defaultValue));
+    if (itemSubSet.length === 0) {
+        return defaultValue;
+    }
+
+    const result = itemSubSet.reduce((a, b) => Math.min(a, b));
     return result;
 }
 
@@ -21,6 +26,11 @@ export function getMaxValue<TKey>(map: Map<TKey, number>, keysSubSet: TKey[], de
         return defaultValue;
     }
 
-    const result = keysSubSet.map(key => getValueOrDefault(map, key, defaultValue)).reduce((a, b) => Math.max(a, b));
+    const itemSubSet = keysSubSet.map(key => getValueOrDefault(map, key, defaultValue));
+    if (itemSubSet.length === 0) {
+        return defaultValue;
+    }
+
+    const result = itemSubSet.reduce((a, b) => Math.max(a, b));
     return result;
 }

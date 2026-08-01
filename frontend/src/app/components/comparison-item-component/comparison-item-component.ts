@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Item } from '../../../models';
+import { Item } from '../../models';
 
 @Component({
     selector: 'app-comparison-item-component',

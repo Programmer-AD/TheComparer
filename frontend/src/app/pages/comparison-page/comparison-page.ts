@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, input, signal } from '@angular/cor
 import { PageSetupService } from '../../utils';
 import { ComparisonSession, Item } from '../../models';
 import { ComparisonModeService } from '../../logic';
-import { ComparisonItemComponent } from "./comparison-item-component/comparison-item-component";
+import { ComparisonItemComponent } from "../../components";
 import { Router } from '@angular/router';
 
 @Component({

@@ -6,22 +6,25 @@
     <div>Started at: <strong>{{ comparisonSession().startDate.toISOString() }}</strong></div>
     <div>Finished at: <strong>{{ comparisonSession().endDate!.toISOString() }}</strong></div>
 </div>
+
+@let itemPackObj = itemPack();
+@if (itemPackObj !== undefined){
 <div>
     <h2>Result</h2>
     @switch (comparisonMode().id) {
     @case (comparisonModeConstants.eloRankingModeId) {
-    <app-elo-ranking-mode-result-component [comparisonSession]="comparisonSession()" />
+    <app-elo-ranking-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
     }
     @case (comparisonModeConstants.stickyModeId) {
-    <app-sticky-mode-result-component [comparisonSession]="comparisonSession()" />
+    <app-sticky-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
     }
     @case (comparisonModeConstants.tournamentModeId) {
-    <app-tournament-mode-result-component [comparisonSession]="comparisonSession()" />
+    <app-tournament-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
     }
     }
 </div>
 <div>
-    <h2>Selections</h2>
+    <h2>Selections (time-reversed)</h2>
     <div class="grid-data">
         @for (selectionRow of selectionRows(); track $index){
         <div class="row">
@@ -34,3 +37,8 @@
         }
     </div>
 </div>
+} @else {
+<div class="error-message-block">
+    Required item pack "{{ comparisonSession().itemPackName }}" (id: "{{ comparisonSession().id }}") is missing, so results can't be properly displayed!
+</div>
+}

@@ -120,6 +120,14 @@ progress {
     margin: 5px 0px;
 }
 
+.error-message-block {
+    background-color: var(--error-color);
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: solid 1px var(--border-color);
+}
+
 .button-line * {
     margin-right: 5px;
 
