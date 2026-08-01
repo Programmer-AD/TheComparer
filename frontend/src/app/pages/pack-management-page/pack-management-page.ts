@@ -76,7 +76,7 @@ export class PackManagementPage {
                 name: itemRow.name().trim(),
                 icon: itemRow.icon(),
                 description: makeUndefinedIfEmpty(itemRow.description().trim()),
-            })),
+            })).sort((a, b) => a.name.localeCompare(b.name)),
         };
 
         this.itemPackService.upsertAsync(updatedItemPack);
