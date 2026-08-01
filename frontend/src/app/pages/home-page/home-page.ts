@@ -68,6 +68,19 @@ export class HomePage {
         await this.refreshItemPacksAsync();
     }
 
+    protected async onFetchCommonPacksClick() {
+        const commonPacks = ["products"];
+        // This should be made reusable whenever it would be necessary, also more user-friendly (loading spinner)
+        const baseUrl = document.getElementsByTagName("base")[0].href;
+        const packUrls = commonPacks.map(packName => `${baseUrl}common-packs/${packName}.pack`);
+
+        for (const packUrl of packUrls) {
+            const packData = await fetch(packUrl).then(x => x.text());
+            await this.itemPackService.importAsync(packData);
+            await this.refreshItemPacksAsync();
+        }
+    }
+
     protected onPackRowClick(itemPack: ItemPack): void {
         this.router.navigate(["comparison/start", itemPack.id]);
     }

@@ -6,6 +6,7 @@
     <div class="button-line">
         <button (click)="onCreateNewPackClick()">Create new pack</button>
         <button (click)="onImportPackClick()">Import pack</button>
+        <button (click)="onFetchCommonPacksClick()">Fetch common packs</button>
     </div>
     <div class="grid-data">
         @for (itemPack of itemPacks(); track itemPack.id){
