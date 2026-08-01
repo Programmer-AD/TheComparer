@@ -56,5 +56,6 @@ jobs:
           path: "frontend/dist/TheComparer/browser"
 
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/master'
         id: deployment
         uses: actions/deploy-pages@v5
