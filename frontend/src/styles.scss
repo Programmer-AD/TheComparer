@@ -6,14 +6,24 @@
     --text-color: white;
     --border-color: gray;
     --error-color: #ff7777;
+    --secondary-color: #0d0e36;
 
     --controls-background-color: #d8ca60;
     --controls-hover-background-color: #c8ba50;
     --controls-active-background-color: #b8aa40;
     --controls-disabled-background-color: gray;
     --controls-text-color: black;
+}
 
-    --secondary-color: #0d0e36;
+@media print {
+    :root {
+        --background-color: white;
+        --text-color: black;
+        --border-color: gray;
+        --secondary-color: lightgray;
+
+        --controls-disabled-background-color: lightgray;
+    }
 }
 
 /* Global style defaults */
@@ -48,6 +58,12 @@ button {
     &:disabled {
         cursor: not-allowed;
         background-color: var(--controls-disabled-background-color);
+    }
+}
+
+@media print {
+    button {
+        display: none;
     }
 }
 
@@ -155,6 +171,12 @@ progress {
         &:hover {
             background-color: var(--secondary-color);
         }
+    }
+}
+
+@media print {
+    .grid-data {
+        max-height: none;
     }
 }
 

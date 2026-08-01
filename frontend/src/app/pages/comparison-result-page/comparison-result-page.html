@@ -7,6 +7,10 @@
     <div>Finished at: <strong>{{ comparisonSession().endDate!.toISOString() }}</strong></div>
 </div>
 
+<div class="button-line">
+    <button (click)="onPrintClick()">Print</button>
+</div>
+
 @let itemPackObj = itemPack();
 @if (itemPackObj !== undefined){
 <div>

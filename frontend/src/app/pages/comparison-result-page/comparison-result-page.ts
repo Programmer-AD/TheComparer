@@ -44,4 +44,8 @@ export class ComparisonResultPage {
             this.itemPack.set(itemPack);
         })
     }
+
+    protected onPrintClick(): void {
+        window.print();
+    }
 }
