@@ -1,0 +1,18 @@
+<h3>Most selected item</h3>
+<div class="grid-data">
+    @for (itemRow of itemRows(); track itemRow.id){
+    <div class="row">
+        <div class="row-data">
+            <img class="icon-image" [class.invisible]="itemRow.icon === undefined" alt="Item icon" [src]="itemRow.icon" />
+            <span>
+                <strong>{{ itemRow.name }}</strong>
+            </span>
+            <span>
+                ({{ itemRow.wonComparisons }})
+            </span>
+        </div>
+    </div>
+    } @empty {
+    <div>No items</div>
+    }
+</div>

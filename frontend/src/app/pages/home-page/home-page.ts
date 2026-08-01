@@ -1,0 +1,142 @@
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { PageSetupService, FileInteractionService } from '../../utils';
+import { ComparisonModeService, ComparisonSessionService, ItemPackService } from '../../logic';
+import { ComparisonSession, ItemPack } from '../../models';
+import { Router } from '@angular/router';
+
+@Component({
+    selector: 'app-home-page',
+    imports: [],
+    templateUrl: './home-page.html',
+    styleUrl: './home-page.scss',
+})
+export class HomePage {
+    private router = inject(Router);
+    private pageSetupService = inject(PageSetupService);
+    private fileInteractionService = inject(FileInteractionService);
+    private comparisonSessionService = inject(ComparisonSessionService);
+    private comparisonModeService = inject(ComparisonModeService);
+    private itemPackService = inject(ItemPackService);
+
+    protected readonly itemPacks = signal<ItemPack[]>([]);
+    private readonly comparisonSessions = signal<ComparisonSession[]>([]);
+    protected readonly sessionFilterValue = signal<number>(0);
+    protected readonly filteredComparisonSessions = computed(() => {
+        const sessions = this.comparisonSessions();
+        const sessionFilterValue = this.sessionFilterValue();
+
+        const extendedSessions = sessions.map(x => ({ ...x, comparisonModeName: this.comparisonModeService.getById(x.comparisonMode)!.name }));
+
+        extendedSessions.sort((a, b) => b.startDate.toISOString().localeCompare(a.startDate?.toISOString()));
+
+        return extendedSessions.filter(session => {
+            switch (sessionFilterValue) {
+                case 0:
+                default:
+                    return true;
+                case 1:
+                    return session.endDate === undefined;
+                case 2:
+                    return session.endDate !== undefined;
+            }
+        });
+    });
+
+    constructor() {
+        effect(async () => {
+            this.pageSetupService.setupPage("Welcome to TheComparer", null);
+            await Promise.all([
+                this.refreshComparisonSessionsAsync(),
+                this.refreshItemPacksAsync()
+            ]);
+        })
+    }
+
+    protected async onCreateNewPackClick(): Promise<void> {
+        await this.itemPackService.createNewAsync();
+        await this.refreshItemPacksAsync();
+    }
+
+    protected async onImportPackClick(): Promise<void> {
+        const file = await this.fileInteractionService.selectFileAsync();
+        if (file === undefined) {
+            return;
+        }
+
+        const data = await file.text();
+        await this.itemPackService.importAsync(data);
+        await this.refreshItemPacksAsync();
+    }
+
+    protected async onFetchCommonPacksClick() {
+        const commonPacks = ["products"];
+        // This should be made reusable whenever it would be necessary, also more user-friendly (loading spinner)
+        const baseUrl = document.getElementsByTagName("base")[0].href;
+        const packUrls = commonPacks.map(packName => `${baseUrl}common-packs/${packName}.pack`);
+
+        for (const packUrl of packUrls) {
+            const packData = await fetch(packUrl).then(x => x.text());
+            await this.itemPackService.importAsync(packData);
+            await this.refreshItemPacksAsync();
+        }
+    }
+
+    protected onPackRowClick(itemPack: ItemPack): void {
+        this.router.navigate(["comparison/start", itemPack.id]);
+    }
+
+    protected onEditPackClick(event: Event, itemPack: ItemPack): void {
+        event.stopPropagation();
+
+        this.router.navigate(["pack-management", itemPack.id]);
+    }
+
+    protected async onDownloadPackClick(event: Event, itemPack: ItemPack): Promise<void> {
+        event.stopPropagation();
+
+        const data = await this.itemPackService.exportAsync(itemPack.id);
+        this.fileInteractionService.downloadFile(`${itemPack.id}.pack`, data);
+    }
+
+    protected async onDeletePackClick(event: Event, itemPack: ItemPack): Promise<void> {
+        event.stopPropagation();
+
+        if (confirm(`Are you sure you want to delete item pack "${itemPack.name}"?`)) {
+            await this.itemPackService.deleteAsync(itemPack.id);
+            this.refreshItemPacksAsync();
+        }
+    }
+
+    protected async onDeleteSessionClick(event: Event, comparisonSession: ComparisonSession): Promise<void> {
+        event.stopPropagation();
+
+        const modeName = this.comparisonModeService.getById(comparisonSession.comparisonMode)!.name;
+        if (confirm(`Are you sure you want to delete session ${modeName} "${comparisonSession.itemPackName}"?`)) {
+            await this.comparisonSessionService.deleteAsync(comparisonSession.id);
+            this.refreshComparisonSessionsAsync();
+        }
+    }
+
+    protected onSessionFilterSelectionChange(event: Event) {
+        const selectedValue = (<HTMLSelectElement>event.target).value;
+        this.sessionFilterValue.set(parseInt(selectedValue));
+    }
+
+    protected onSessionRowClick(comparisonSession: ComparisonSession) {
+        if (comparisonSession.endDate === undefined) {
+            this.router.navigate(["comparison", comparisonSession.id]);
+        } else {
+            this.router.navigate(["comparison", comparisonSession.id, "result"]);
+        }
+    }
+
+    private async refreshComparisonSessionsAsync(): Promise<void> {
+        const comparisonSessions = await this.comparisonSessionService.getAllAsync();
+        this.comparisonSessions.set(comparisonSessions);
+    }
+
+    private async refreshItemPacksAsync(): Promise<void> {
+        const itemPacks = await this.itemPackService.getAllAsync();
+        this.itemPacks.set(itemPacks);
+    }
+}

@@ -1,0 +1,10 @@
+@let itemObj = item();
+<div class="item-container" (click)="onClick($event)">
+    @if (itemObj.icon !== undefined){
+    <img class="full-image" [alt]="'Image for ' + itemObj.name" [src]="itemObj.icon" />
+    }
+    <div class="item-name">{{ itemObj.name }}</div>
+    @if (itemObj.description !== undefined){
+    <div class="item-description">{{ itemObj.description }}</div>
+    }
+</div>

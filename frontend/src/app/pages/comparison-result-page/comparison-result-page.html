@@ -1,0 +1,50 @@
+<div>
+    <h2>About session</h2>
+    <div>Mode: <strong>{{ comparisonMode().name }}</strong></div>
+    <div>Question: <strong>{{ comparisonSession().comparisonQuestion }}</strong></div>
+    <div>Item pack: <strong>{{ comparisonSession().itemPackName }}</strong></div>
+    <div>Started at: <strong>{{ comparisonSession().startDate.toISOString() }}</strong></div>
+    <div>Finished at: <strong>{{ comparisonSession().endDate!.toISOString() }}</strong></div>
+</div>
+
+<div class="button-line">
+    <button (click)="onPrintClick()">Print</button>
+</div>
+
+@let itemPackObj = itemPack();
+@if (itemPackObj !== undefined){
+<div>
+    <h2>Result</h2>
+    @switch (comparisonMode().id) {
+    @case (comparisonModeConstants.eloRankingModeId) {
+    <app-elo-ranking-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
+    }
+    @case (comparisonModeConstants.stickyModeId) {
+    <app-sticky-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
+    }
+    @case (comparisonModeConstants.tournamentModeId) {
+    <app-tournament-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
+    }
+    }
+</div>
+<div>
+    <h2>Selections (time-reversed)</h2>
+    <div class="grid-data">
+        @for (selectionRow of selectionRows(); track $index){
+        <div class="row">
+            <div class="row-data">
+                <app-comparison-item-selection-component [item]="selectionRow.firstItem" [isSelected]="selectionRow.isFirstSelected" />
+                <div>VS</div>
+                <app-comparison-item-selection-component [item]="selectionRow.secondItem" [isSelected]="selectionRow.isSecondSelected" />
+            </div>
+        </div>
+        } @empty {
+        <div>No selections</div>
+        }
+    </div>
+</div>
+} @else {
+<div class="error-message-block">
+    Required item pack "{{ comparisonSession().itemPackName }}" (id: "{{ comparisonSession().id }}") is missing, so results can't be properly displayed!
+</div>
+}

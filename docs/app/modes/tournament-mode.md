@@ -40,7 +40,7 @@ The count of estimation is estimated according to following algorithm:
     - `pair count = remaining item count / 2`
     - `leftover item = remaining item count % 2`
     - `estimate += pair count`
-    - `item count = pair count + leftover item`
+    - `remaining item count = pair count + leftover item`
 
 ## Result look
 

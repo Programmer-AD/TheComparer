@@ -1,0 +1,16 @@
+canvas {
+    border: solid 1px var(--border-color);
+}
+
+.image-input-container {
+    position: relative;
+}
+
+.clear-button {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    padding: 0px;
+    top: 0px;
+    transform: translateX(-100%);
+}

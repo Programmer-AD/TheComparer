@@ -1,0 +1,9 @@
+@let itemObj = winnerItem();
+@if (itemObj !== undefined){
+<h3>Winner item</h3>
+<app-comparison-item-component [item]="itemObj" />
+} @else {
+<div class="error-message-block">
+    The winner item was not found in the pack. Maybe it was removed?
+</div>
+}

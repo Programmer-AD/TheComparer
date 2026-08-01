@@ -1,0 +1,43 @@
+.item-pack-info-container {
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    border-radius: 10px;
+    border: solid 1px var(--border-color);
+
+    .item-pack-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-left: 5px;
+
+        .item-pack-name {
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        .item-pack-author {
+            font-style: italic;
+            font-size: small;
+        }
+
+        .item-pack-description {
+            flex: 1;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    }
+}
+
+.comparison-setup-container {
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: solid 1px var(--border-color);
+
+    .comparison-mode-description {
+        padding: 5px;
+        border-radius: 5px;
+        border: solid 1px var(--border-color);
+    }
+}

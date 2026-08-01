@@ -1,0 +1,69 @@
+<div class="description-text">
+    Welcome to "The Comparer". This is an utility which helps to find out your hidden preferences using set of simple comparsions.
+</div>
+<div>
+    <h2>Item packs</h2>
+    <div class="button-line">
+        <button (click)="onCreateNewPackClick()">Create new pack</button>
+        <button (click)="onImportPackClick()">Import pack</button>
+        <button (click)="onFetchCommonPacksClick()">Fetch common packs</button>
+    </div>
+    <div class="grid-data">
+        @for (itemPack of itemPacks(); track itemPack.id){
+        <div class="row" (click)="onPackRowClick(itemPack)">
+            <div class="row-data">
+                <img class="icon-image" [class.invisible]="itemPack.icon === undefined" alt="Item pack icon" [src]="itemPack.icon" />
+                <span>
+                    <strong>{{ itemPack.name }}</strong>
+                    @if (itemPack.author !== undefined){
+                    <span> by </span>
+                    <strong>{{ itemPack.author }}</strong>
+                    }
+                </span>
+            </div>
+            <div class="row-actions button-line">
+                <button (click)="onEditPackClick($event, itemPack)">Edit</button>
+                <button (click)="onDownloadPackClick($event, itemPack)">Download</button>
+                <button (click)="onDeletePackClick($event, itemPack)">Delete</button>
+            </div>
+        </div>
+        }@empty {
+        <div>No item packs</div>
+        }
+    </div>
+</div>
+<div>
+    <h2>Sessions</h2>
+    <div>
+        <select (input)="onSessionFilterSelectionChange($event)">
+            <option selected value="0">All</option>
+            <option value="1">Unfinished</option>
+            <option value="2">Finished</option>
+        </select>
+    </div>
+    <div class="grid-data">
+        @for (comparisonSession of filteredComparisonSessions(); track comparisonSession.id){
+        <div class="row" (click)="onSessionRowClick(comparisonSession)">
+            <div class="row-data">
+                <span>
+                    <strong>{{ comparisonSession.comparisonModeName }}</strong>
+                    <span> for </span>
+                    <strong>"{{comparisonSession.itemPackName}}"</strong>
+                    <span> from </span>
+                    <strong>{{ comparisonSession.startDate.toISOString() }}</strong>
+                    @if (comparisonSession.endDate !== undefined){
+                    <span> (Finished at </span>
+                    <strong>{{ comparisonSession.endDate.toISOString() }}</strong>
+                    <span>)</span>
+                    }
+                </span>
+            </div>
+            <div class="row-actions button-line">
+                <button (click)="onDeleteSessionClick($event, comparisonSession)">Delete</button>
+            </div>
+        </div>
+        } @empty {
+        <div>No sessions</div>
+        }
+    </div>
+</div>

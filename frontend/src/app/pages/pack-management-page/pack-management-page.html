@@ -1,0 +1,67 @@
+<div>
+    <h2>Item pack properties</h2>
+    <div class="form-row">
+        <label>Name</label>
+        <app-short-text-input-component [(value)]="packProperties.name" />
+    </div>
+    <div class="form-row">
+        <label>Author</label>
+        <app-short-text-input-component [(value)]="packProperties.author" />
+    </div>
+    <div class="form-row">
+        <label>Icon</label>
+        <app-image-input-component [(value)]="packProperties.icon" [imageWidth]="100" [imageHeight]="100" />
+    </div>
+    <div class="form-row">
+        <label>Description</label>
+        <app-long-text-input-component [(value)]="packProperties.description" />
+    </div>
+    <div class="form-row">
+        <label>Questions (one per line)</label>
+        <app-long-text-input-component [(value)]="packProperties.questions" />
+    </div>
+    <button (click)="onSaveButtonClick()">Save</button>
+</div>
+<div>
+    <h2>Items</h2>
+    <div class="button-line">
+        <button (click)="onAddItemClick()">Add item</button>
+    </div>
+    <div class="grid-data">
+        @for (itemRow of packProperties.items(); track itemRow.id){
+        <div class="row" (click)="onItemRowClick(itemRow)">
+            <div class="row-data">
+                <img class="icon-image" [class.invisible]="itemRow.icon() === undefined" alt="Item icon" [src]="itemRow.icon()" />
+                <span>
+                    <strong>{{ itemRow.name() }}</strong>
+                </span>
+            </div>
+            <div class="row-actions button-line">
+                <button (click)="onDeleteItemClick($event, itemRow)">Delete</button>
+            </div>
+        </div>
+        }@empty {
+        <div>No items</div>
+        }
+    </div>
+    <button (click)="onSaveButtonClick()">Save</button>
+</div>
+@let selectedItemObj = selectedItem();
+@if (selectedItemObj !== undefined){
+<app-modal-dialog-component (closing)="onItemEditModalClosing()">
+    <div>
+        <div class="form-row">
+            <label>Name</label>
+            <app-short-text-input-component [(value)]="selectedItemObj.name" />
+        </div>
+        <div class="form-row">
+            <label>Icon</label>
+            <app-image-input-component [(value)]="selectedItemObj.icon" [imageWidth]="300" [imageHeight]="300" />
+        </div>
+        <div class="form-row">
+            <label>Description</label>
+            <app-long-text-input-component [(value)]="selectedItemObj.description" />
+        </div>
+    </div>
+</app-modal-dialog-component>
+}

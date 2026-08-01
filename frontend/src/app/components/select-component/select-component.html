@@ -1,0 +1,5 @@
+<select (input)="onInput($event)">
+    @for (option of options(); track option.caption){
+    <option [value]="option.value" [selected]="value() === option.value">{{option.caption}}</option>
+    }
+</select>

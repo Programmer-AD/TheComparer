@@ -1,0 +1,194 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* CSS color variables */
+:root {
+    --background-color: #1d1e56;
+    --text-color: white;
+    --border-color: gray;
+    --error-color: #ff7777;
+    --secondary-color: #0d0e36;
+
+    --controls-background-color: #d8ca60;
+    --controls-hover-background-color: #c8ba50;
+    --controls-active-background-color: #b8aa40;
+    --controls-disabled-background-color: gray;
+    --controls-text-color: black;
+}
+
+@media print {
+    :root {
+        --background-color: white;
+        --text-color: black;
+        --border-color: gray;
+        --secondary-color: lightgray;
+
+        --controls-disabled-background-color: lightgray;
+    }
+}
+
+/* Global style defaults */
+:root {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+    font-family: sans-serif;
+}
+
+body {
+    margin: 0px;
+}
+
+button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+
+    background-color: var(--controls-background-color);
+    color: var(--controls-text-color);
+
+    &:hover {
+        background-color: var(--controls-hover-background-color);
+    }
+
+    &:active {
+        background-color: var(--controls-active-background-color);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        background-color: var(--controls-disabled-background-color);
+    }
+}
+
+@media print {
+    button {
+        display: none;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 5px 0px;
+}
+
+textarea {
+    width: 400px;
+    border-radius: 5px;
+    border-color: var(--border-color);
+    padding: 5px;
+    margin: 0px;
+    height: 100px;
+    resize: none;
+}
+
+input,
+select {
+    width: 400px;
+    border-radius: 5px;
+    border-color: var(--border-color);
+    padding: 5px;
+    margin: 0px;
+
+    &[type=number] {
+        width: 200px;
+    }
+}
+
+progress {
+    height: 20px;
+    accent-color: var(--controls-active-background-color);
+}
+
+/* Shared classes */
+@mixin strict-size($width, $height) {
+    min-width: $width;
+    max-width: $width;
+    min-height: $height;
+    max-height: $height;
+    overflow: hidden;
+}
+
+.icon-image {
+    @include strict-size(40px, 40px);
+}
+
+.big-icon-image {
+    @include strict-size(100px, 100px);
+}
+
+.full-image {
+    @include strict-size(300px, 300px);
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.description-text {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin: 5px 0px;
+}
+
+.error-message-block {
+    background-color: var(--error-color);
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: solid 1px var(--border-color);
+}
+
+.button-line * {
+    margin-right: 5px;
+
+    &:last-child {
+        margin-right: 0px;
+    }
+}
+
+.grid-data {
+    max-height: 400px;
+    overflow-y: auto;
+
+    .row {
+        display: flex;
+        padding: 5px;
+        border: 1px solid var(--border-color);
+        align-items: center;
+
+        .row-data {
+            display: flex;
+            flex: 1;
+            align-items: center;
+        }
+
+        &:hover {
+            background-color: var(--secondary-color);
+        }
+    }
+}
+
+@media print {
+    .grid-data {
+        max-height: none;
+    }
+}
+
+.form-row {
+    margin: 5px 0px;
+
+    label {
+        display: block;
+        margin-left: 2px;
+
+        &::after {
+            content: ":";
+        }
+    }
+}
