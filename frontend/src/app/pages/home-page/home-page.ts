@@ -94,6 +94,16 @@ export class HomePage {
         }
     }
 
+    protected async onDeleteSessionClick(event: Event, comparisonSession: ComparisonSession): Promise<void> {
+        event.stopPropagation();
+
+        const modeName = this.comparisonModeService.getById(comparisonSession.comparisonMode)!.name;
+        if (confirm(`Are you sure you want to delete session ${modeName} "${comparisonSession.itemPackName}"?`)) {
+            await this.comparisonSessionService.deleteAsync(comparisonSession.id);
+            this.refreshComparisonSessionsAsync();
+        }
+    }
+
     protected onSessionFilterSelectionChange(event: Event) {
         const selectedValue = (<HTMLSelectElement>event.target).value;
         this.sessionFilterValue.set(parseInt(selectedValue));
