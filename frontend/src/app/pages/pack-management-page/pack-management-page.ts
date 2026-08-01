@@ -29,7 +29,7 @@ export class PackManagementPage {
     constructor() {
         effect(async () => {
             await this.initFormDataAsync();
-        })
+        });
     }
 
     protected onAddItemClick(): void {

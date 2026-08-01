@@ -34,6 +34,8 @@
                 <app-comparison-item-selection-component [item]="selectionRow.secondItem" [isSelected]="selectionRow.isSecondSelected" />
             </div>
         </div>
+        } @empty {
+        <div>No selections</div>
         }
     </div>
 </div>

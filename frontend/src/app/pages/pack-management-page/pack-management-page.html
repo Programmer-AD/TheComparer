@@ -40,6 +40,8 @@
                 <button (click)="onDeleteItemClick($event, itemRow)">Delete</button>
             </div>
         </div>
+        }@empty {
+        <div>No items</div>
         }
     </div>
     <button (click)="onSaveButtonClick()">Save</button>

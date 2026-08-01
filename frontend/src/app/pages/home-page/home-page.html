@@ -26,6 +26,8 @@
                 <button (click)="onDeletePackClick($event, itemPack)">Delete</button>
             </div>
         </div>
+        }@empty {
+        <div>No item packs</div>
         }
     </div>
 </div>
@@ -59,6 +61,8 @@
                 <button (click)="onDeleteSessionClick($event, comparisonSession)">Delete</button>
             </div>
         </div>
+        } @empty {
+        <div>No sessions</div>
         }
     </div>
 </div>
