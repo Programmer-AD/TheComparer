@@ -35,6 +35,10 @@ export class ComparisonStartPage {
     constructor() {
         effect(async () => {
             this.pageSetupService.setupPage(`Setup comparison for "${this.itemPack().name}"`, "/");
+
+            if (this.itemPack().questions.length > 0) {
+                this.selectedQuestion.set(this.itemPack().questions[0]);
+            }
         });
     }
 
