@@ -24,9 +24,6 @@ export const routes: Routes = [
     {
         path: "comparison/:sessionId/result",
         loadComponent: () => import("./pages/comparison-result-page/comparison-result-page").then(x => x.ComparisonResultPage),
-        resolve: {
-            comparisonSession: comparisonSessionResolver,
-        }
     },
     {
         path: "pack-management/:itemPackId",

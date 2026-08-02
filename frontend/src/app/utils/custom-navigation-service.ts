@@ -9,3 +9,5 @@ export class CustomNavigationService {
         return new RedirectCommand(this.router.parseUrl("/not-found"), { browserUrl: shownUrl });
     }
 }
+
+//TODO:Delete
