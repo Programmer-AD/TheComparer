@@ -1,29 +1,39 @@
+@let comparisonSession = comparisonSessionResource.value();
+@let comparisonModeObj = comparisonMode();
+
+@if (comparisonSessionResource.isLoading() || itemPackResource.isLoading()){
+<app-loading-placeholder-page />
+} @else if (comparisonSession === undefined || comparisonModeObj === undefined){
+<app-not-found-page />
+} @else {
+<app-page-title-component [titleText]="`Result of ${comparisonModeObj.name} for &quot;${comparisonSession.itemPackName}&quot;`" backButtonUrl="/" />
+
 <div>
     <h2>About session</h2>
-    <div>Mode: <strong>{{ comparisonMode().name }}</strong></div>
-    <div>Question: <strong>{{ comparisonSession().comparisonQuestion }}</strong></div>
-    <div>Item pack: <strong>{{ comparisonSession().itemPackName }}</strong></div>
-    <div>Started at: <strong>{{ comparisonSession().startDate.toISOString() }}</strong></div>
-    <div>Finished at: <strong>{{ comparisonSession().endDate!.toISOString() }}</strong></div>
+    <div>Mode: <strong>{{ comparisonModeObj.name }}</strong></div>
+    <div>Question: <strong>{{ comparisonSession.comparisonQuestion }}</strong></div>
+    <div>Item pack: <strong>{{ comparisonSession.itemPackName }}</strong></div>
+    <div>Started at: <strong>{{ comparisonSession.startDate.toISOString() }}</strong></div>
+    <div>Finished at: <strong>{{ comparisonSession.endDate!.toISOString() }}</strong></div>
 </div>
 
 <div class="button-line">
     <button (click)="onPrintClick()">Print</button>
 </div>
 
-@let itemPackObj = itemPack();
-@if (itemPackObj !== undefined){
+@if (itemPackResource.hasValue()){
+@let itemPack = itemPackResource.value();
 <div>
     <h2>Result</h2>
-    @switch (comparisonMode().id) {
+    @switch (comparisonModeObj.id) {
     @case (comparisonModeConstants.eloRankingModeId) {
-    <app-elo-ranking-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
+    <app-elo-ranking-mode-result-component [comparisonSession]="comparisonSession" [itemPack]="itemPack" />
     }
     @case (comparisonModeConstants.stickyModeId) {
-    <app-sticky-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
+    <app-sticky-mode-result-component [comparisonSession]="comparisonSession" [itemPack]="itemPack" />
     }
     @case (comparisonModeConstants.tournamentModeId) {
-    <app-tournament-mode-result-component [comparisonSession]="comparisonSession()" [itemPack]="itemPackObj" />
+    <app-tournament-mode-result-component [comparisonSession]="comparisonSession" [itemPack]="itemPack" />
     }
     }
 </div>
@@ -45,6 +55,7 @@
 </div>
 } @else {
 <div class="error-message-block">
-    Required item pack "{{ comparisonSession().itemPackName }}" (id: "{{ comparisonSession().id }}") is missing, so results can't be properly displayed!
+    Required item pack "{{ comparisonSession.itemPackName }}" (id: "{{ comparisonSession.id }}") is missing, so results can't be properly displayed!
 </div>
+}
 }

@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { NotFoundPage } from './pages/not-found-page/not-found-page';
-import { comparisonSessionResolver, itemPackResolver } from './resolvers';
 
 export const routes: Routes = [
     {
@@ -10,30 +9,18 @@ export const routes: Routes = [
     {
         path: "comparison/start/:itemPackId",
         loadComponent: () => import("./pages/comparison-start-page/comparison-start-page").then(x => x.ComparisonStartPage),
-        resolve: {
-            itemPack: itemPackResolver,
-        }
     },
     {
         path: "comparison/:sessionId",
         loadComponent: () => import("./pages/comparison-page/comparison-page").then(x => x.ComparisonPage),
-        resolve: {
-            comparisonSession: comparisonSessionResolver,
-        }
     },
     {
         path: "comparison/:sessionId/result",
         loadComponent: () => import("./pages/comparison-result-page/comparison-result-page").then(x => x.ComparisonResultPage),
-        resolve: {
-            comparisonSession: comparisonSessionResolver,
-        }
     },
     {
         path: "pack-management/:itemPackId",
         loadComponent: () => import("./pages/pack-management-page/pack-management-page").then(x => x.PackManagementPage),
-        resolve: {
-            itemPack: itemPackResolver,
-        }
     },
     {
         path: "**",

@@ -1,59 +1,68 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
-import { PageSetupService } from '../../utils';
-import { ComparisonSession, Item } from '../../models';
-import { ComparisonModeService } from '../../logic';
-import { ComparisonItemComponent } from "../../components";
+import { Component, computed, effect, inject, input, resource } from '@angular/core';
 import { Router } from '@angular/router';
+import { Item } from '../../models';
+import { ComparisonModeService, ComparisonSessionService } from '../../logic';
+import { ComparisonItemComponent, PageTitleComponent } from "../../components";
+import { LoadingPlaceholderPage } from "../loading-placeholder-page/loading-placeholder-page";
+import { NotFoundPage } from "../not-found-page/not-found-page";
 
 @Component({
     selector: 'app-comparison-page',
-    imports: [ComparisonItemComponent],
+    imports: [ComparisonItemComponent, PageTitleComponent, LoadingPlaceholderPage, NotFoundPage],
     templateUrl: './comparison-page.html',
     styleUrl: './comparison-page.scss',
 })
 export class ComparisonPage {
     private router = inject(Router);
-    private pageSetupService = inject(PageSetupService);
     private comparisonModeService = inject(ComparisonModeService);
+    private comparisonSessionService = inject(ComparisonSessionService);
 
-    public comparisonSession = input.required<ComparisonSession>();
-    protected comparisonMode = computed(() => this.comparisonModeService.getById(this.comparisonSession().comparisonMode)!);
+    public sessionId = input.required<string>();
 
-    protected firstItem = signal<Item | undefined>(undefined);
-    protected secondItem = signal<Item | undefined>(undefined);
-    protected completedComparisonCount = signal<number>(0);
-    protected estimatedTotalComparisonCount = signal<number>(0);
+    protected comparisonSessionResource = resource({
+        params: () => this.sessionId(),
+        loader: ({ params: sessionId }) => this.comparisonSessionService.getByIdAsync(sessionId),
+    });
+
+    protected comparisonMode = computed(() => this.comparisonSessionResource.hasValue()
+        ? this.comparisonModeService.getById(this.comparisonSessionResource.value().comparisonMode)
+        : undefined);
+
+    protected comparisonStateResource = resource({
+        params: ({ chain }) => chain(this.comparisonSessionResource),
+        loader: async ({ params: comparisonSession }) => this.comparisonMode() !== undefined
+            ? await this.comparisonMode()!.getComparisonStateAsync(comparisonSession)
+            : undefined,
+    })
 
     constructor() {
         effect(async () => {
-            this.pageSetupService.setupPage(`Comparing items from "${this.comparisonSession().itemPackName}"`, "/");
-
-            await this.refreshComparisonStateAsync();
+            const comparisonState = this.comparisonStateResource.value();
+            if (comparisonState !== undefined
+                && (comparisonState.completedComparisons >= comparisonState.estimatedTotalComparisons || comparisonState.items === undefined)) {
+                // If all comparisons are done - go to result
+                this.router.navigate(["comparison", this.sessionId(), "result"]);
+                return;
+            }
         });
     }
 
     protected async onSelectionClick(selectedItem: Item | undefined): Promise<void> {
-        // selectedItem == undefined means "Equals"
-        await this.comparisonMode().setSelectionAsync(this.comparisonSession(), {
-            selectedItemId: selectedItem?.id,
-            optionItemIds: [this.firstItem()!.id, this.secondItem()!.id]
-        });
+        // When selectedItem is undefined, it means "Equals"
+        const comparisonSession = this.comparisonSessionResource.value();
+        const comparisonMode = this.comparisonMode();
+        const comparisonState = this.comparisonStateResource.value();
 
-        await this.refreshComparisonStateAsync();
-    }
-
-    private async refreshComparisonStateAsync(): Promise<void> {
-        const comparisonState = await this.comparisonMode().getComparisonStateAsync(this.comparisonSession());
-
-        if (comparisonState.completedComparisons >= comparisonState.estimatedTotalComparisons || comparisonState.items === undefined) {
-            // If all comparisons are done - go to result
-            this.router.navigate(["comparison", this.comparisonSession().id, "result"]);
+        if (comparisonMode === undefined || comparisonSession === undefined || comparisonState === undefined) {
+            console.error("There were no selection since either mode, session or state is undefined.");
             return;
         }
 
-        this.firstItem.set(comparisonState.items[0]);
-        this.secondItem.set(comparisonState.items[1]);
-        this.completedComparisonCount.set(comparisonState.completedComparisons);
-        this.estimatedTotalComparisonCount.set(comparisonState.estimatedTotalComparisons);
+        await comparisonMode.setSelectionAsync(comparisonSession, {
+            selectedItemId: selectedItem?.id,
+            optionItemIds: comparisonState.items!.map(x => x.id),
+        });
+
+        this.comparisonStateResource.reload();
     }
 }

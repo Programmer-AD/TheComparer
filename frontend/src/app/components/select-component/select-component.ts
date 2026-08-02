@@ -11,8 +11,8 @@ export class SelectComponent {
     public value = model<string>();
 
     protected onInput(event: InputEvent) {
-        const inputElement = <HTMLSelectElement>event.target;
-        const value = inputElement.value;
+        const selectElement = <HTMLSelectElement>event.target;
+        const value = selectElement.value;
         this.value.set(value);
     }
 }

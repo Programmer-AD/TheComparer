@@ -1,36 +1,40 @@
-import { Component, effect, inject, input, signal, WritableSignal } from '@angular/core';
-import { PageSetupService } from '../../utils';
+import { Component, inject, input, linkedSignal, resource, signal, WritableSignal } from '@angular/core';
 import { ItemPackService } from '../../logic';
 import { ItemPack } from '../../models';
-import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent } from "../../components";
+import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent, PageTitleComponent } from "../../components";
+import { LoadingPlaceholderPage } from "../loading-placeholder-page/loading-placeholder-page";
+import { NotFoundPage } from "../not-found-page/not-found-page";
 
 @Component({
     selector: 'app-pack-management-page',
-    imports: [ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent],
+    imports: [ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent, PageTitleComponent, LoadingPlaceholderPage, NotFoundPage],
     templateUrl: './pack-management-page.html',
     styleUrl: './pack-management-page.scss',
 })
 export class PackManagementPage {
-    private pageSetupService = inject(PageSetupService);
     private itemPackService = inject(ItemPackService);
 
-    public itemPack = input.required<ItemPack>();
+    public itemPackId = input.required<string>();
+
+    protected itemPackResource = resource({
+        params: () => this.itemPackId(),
+        loader: ({ params: itemPackId }) => this.itemPackService.getByIdAsync(itemPackId),
+    });
 
     protected packProperties = {
-        name: signal<string>(""),
-        author: signal<string>(""),
-        icon: signal<string | undefined>(""),
-        description: signal<string>(""),
-        questions: signal<string>(""),
-        items: signal<MutableItemRow[]>([]),
+        name: linkedSignal<string>(() => this.itemPackResource.value()?.name ?? ""),
+        author: linkedSignal<string>(() => this.itemPackResource.value()?.author ?? ""),
+        icon: linkedSignal<string | undefined>(() => this.itemPackResource.value()?.icon),
+        description: linkedSignal<string>(() => this.itemPackResource.value()?.description ?? ""),
+        questions: linkedSignal<string>(() => this.itemPackResource.value()?.questions.join("\r\n") ?? ""),
+        items: linkedSignal<MutableItemRow[]>(() => this.itemPackResource.value()?.items?.map(item => ({
+            id: item.id,
+            name: signal<string>(item.name),
+            icon: signal<string | undefined>(item.icon),
+            description: signal<string>(item.description ?? "")
+        })) ?? []),
     };
     protected selectedItem = signal<MutableItemRow | undefined>(undefined);
-
-    constructor() {
-        effect(async () => {
-            await this.initFormDataAsync();
-        });
-    }
 
     protected onAddItemClick(): void {
         this.packProperties.items.update(rows => rows.concat([{
@@ -65,7 +69,7 @@ export class PackManagementPage {
             .filter(x => x !== "");
 
         const updatedItemPack: ItemPack = {
-            id: this.itemPack().id,
+            id: this.itemPackId(),
             name: this.packProperties.name().trim(),
             author: makeUndefinedIfEmpty(this.packProperties.author().trim()),
             icon: this.packProperties.icon(),
@@ -81,24 +85,8 @@ export class PackManagementPage {
 
         this.itemPackService.upsertAsync(updatedItemPack);
 
+        this.itemPackResource.reload();
         alert("Saved successfully");
-    }
-
-    private async initFormDataAsync(): Promise<void> {
-        const itemPack = this.itemPack();
-        this.pageSetupService.setupPage(`Manage pack "${itemPack.name}"`, "/");
-
-        this.packProperties.name.set(itemPack.name);
-        this.packProperties.author.set(itemPack.author ?? "");
-        this.packProperties.icon.set(itemPack.icon);
-        this.packProperties.description.set(itemPack.description ?? "");
-        this.packProperties.questions.set(itemPack.questions.join("\r\n"));
-        this.packProperties.items.set(itemPack.items.map(item => ({
-            id: item.id,
-            name: signal<string>(item.name),
-            icon: signal<string | undefined>(item.icon),
-            description: signal<string>(item.description ?? "")
-        })));
     }
 }
 
