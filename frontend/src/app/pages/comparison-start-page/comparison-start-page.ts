@@ -1,20 +1,17 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
-import { PageSetupService } from '../../utils';
-import { ComparisonMode, ComparisonModeService, ComparisonSessionService } from '../../logic';
-import { SelectComponent } from "../../components/select-component/select-component";
-import { ShortTextInputComponent } from "../../components";
 import { Router } from '@angular/router';
+import { ComparisonMode, ComparisonModeService, ComparisonSessionService } from '../../logic';
+import { ShortTextInputComponent, SelectComponent, PageTitleComponent } from "../../components";
 import { ItemPack } from '../../models';
 
 @Component({
     selector: 'app-comparison-start-page',
-    imports: [SelectComponent, ShortTextInputComponent],
+    imports: [SelectComponent, ShortTextInputComponent, PageTitleComponent],
     templateUrl: './comparison-start-page.html',
     styleUrl: './comparison-start-page.scss',
 })
 export class ComparisonStartPage {
     private router = inject(Router);
-    private pageSetupService = inject(PageSetupService);
     private comparisonModeService = inject(ComparisonModeService);
     private comparisonSessionService = inject(ComparisonSessionService);
 
@@ -34,8 +31,6 @@ export class ComparisonStartPage {
 
     constructor() {
         effect(async () => {
-            this.pageSetupService.setupPage(`Setup comparison for "${this.itemPack().name}"`, "/");
-
             if (this.itemPack().questions.length > 0) {
                 this.selectedQuestion.set(this.itemPack().questions[0]);
             }

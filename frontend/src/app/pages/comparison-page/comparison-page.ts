@@ -1,19 +1,17 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
-import { PageSetupService } from '../../utils';
+import { Router } from '@angular/router';
 import { ComparisonSession, Item } from '../../models';
 import { ComparisonModeService } from '../../logic';
-import { ComparisonItemComponent } from "../../components";
-import { Router } from '@angular/router';
+import { ComparisonItemComponent, PageTitleComponent } from "../../components";
 
 @Component({
     selector: 'app-comparison-page',
-    imports: [ComparisonItemComponent],
+    imports: [ComparisonItemComponent, PageTitleComponent],
     templateUrl: './comparison-page.html',
     styleUrl: './comparison-page.scss',
 })
 export class ComparisonPage {
     private router = inject(Router);
-    private pageSetupService = inject(PageSetupService);
     private comparisonModeService = inject(ComparisonModeService);
 
     public comparisonSession = input.required<ComparisonSession>();
@@ -26,8 +24,6 @@ export class ComparisonPage {
 
     constructor() {
         effect(async () => {
-            this.pageSetupService.setupPage(`Comparing items from "${this.comparisonSession().itemPackName}"`, "/");
-
             // TODO: Fix flickering
             await this.refreshComparisonStateAsync();
         });

@@ -1,18 +1,18 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { PageSetupService, FileInteractionService } from '../../utils';
+import { Router } from '@angular/router';
+import { FileInteractionService } from '../../utils';
 import { ComparisonModeService, ComparisonSessionService, ItemPackService } from '../../logic';
 import { ComparisonSession, ItemPack } from '../../models';
-import { Router } from '@angular/router';
+import { PageTitleComponent } from "../../components";
 
 @Component({
     selector: 'app-home-page',
-    imports: [],
+    imports: [PageTitleComponent],
     templateUrl: './home-page.html',
     styleUrl: './home-page.scss',
 })
 export class HomePage {
     private router = inject(Router);
-    private pageSetupService = inject(PageSetupService);
     private fileInteractionService = inject(FileInteractionService);
     private comparisonSessionService = inject(ComparisonSessionService);
     private comparisonModeService = inject(ComparisonModeService);
@@ -44,8 +44,6 @@ export class HomePage {
 
     constructor() {
         effect(async () => {
-            this.pageSetupService.setupPage("Welcome to TheComparer", null);
-
             // TODO: Fix flickering
             await Promise.all([
                 this.refreshComparisonSessionsAsync(),

@@ -1,3 +1,5 @@
+<app-page-title-component [titleText]="`Comparing items from &quot;${comparisonSession().itemPackName}&quot;`" backButtonUrl="/" />
+
 <div class="comparison-state-container">
     <div class="comparison-question">{{ comparisonSession().comparisonQuestion }}</div>
     <progress [value]="completedComparisonCount()" [max]="estimatedTotalComparisonCount()"></progress>

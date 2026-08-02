@@ -1,4 +1,6 @@
 @let itemPackObj = this.itemPack();
+<app-page-title-component [titleText]="`Setup comparison for &quot;${itemPackObj.name}&quot;`" backButtonUrl="/" />
+
 <div class="item-pack-info-container">
     @if (itemPackObj.icon !== undefined){
     <img class="big-icon-image" alt="Item icon" [src]="itemPackObj.icon" />

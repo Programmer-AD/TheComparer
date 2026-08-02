@@ -1,17 +1,15 @@
 import { Component, effect, inject, input, signal, WritableSignal } from '@angular/core';
-import { PageSetupService } from '../../utils';
 import { ItemPackService } from '../../logic';
 import { ItemPack } from '../../models';
-import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent } from "../../components";
+import { ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent, PageTitleComponent } from "../../components";
 
 @Component({
     selector: 'app-pack-management-page',
-    imports: [ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent],
+    imports: [ShortTextInputComponent, LongTextInputComponent, ImageInputComponent, ModalDialogComponent, PageTitleComponent],
     templateUrl: './pack-management-page.html',
     styleUrl: './pack-management-page.scss',
 })
 export class PackManagementPage {
-    private pageSetupService = inject(PageSetupService);
     private itemPackService = inject(ItemPackService);
 
     public itemPack = input.required<ItemPack>();
@@ -87,7 +85,6 @@ export class PackManagementPage {
 
     private async initFormDataAsync(): Promise<void> {
         const itemPack = this.itemPack();
-        this.pageSetupService.setupPage(`Manage pack "${itemPack.name}"`, "/");
 
         this.packProperties.name.set(itemPack.name);
         this.packProperties.author.set(itemPack.author ?? "");
