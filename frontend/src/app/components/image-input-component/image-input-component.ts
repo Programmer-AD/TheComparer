@@ -22,9 +22,11 @@ export class ImageInputComponent {
     protected isImageSelectionSupported = computed(() => this.canvasContext() !== undefined);
 
     public constructor() {
-        effect(() => {
+        effect(async () => {
             const value = this.value();
-            this.renderImage(value);
+
+            // TODO: Fix flickering
+            await this.renderImage(value);
         });
     }
 

@@ -40,6 +40,7 @@ export class ComparisonResultPage {
         effect(async () => {
             this.pageSetupService.setupPage(`Result of ${this.comparisonMode().name} for "${this.comparisonSession().itemPackName}"`, "/");
 
+            // TODO: Fix flickering
             const itemPack = await this.itemPackService.getByIdAsync(this.comparisonSession().itemPackId);
             this.itemPack.set(itemPack);
         })

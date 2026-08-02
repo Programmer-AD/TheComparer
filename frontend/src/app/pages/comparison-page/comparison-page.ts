@@ -28,6 +28,7 @@ export class ComparisonPage {
         effect(async () => {
             this.pageSetupService.setupPage(`Comparing items from "${this.comparisonSession().itemPackName}"`, "/");
 
+            // TODO: Fix flickering
             await this.refreshComparisonStateAsync();
         });
     }

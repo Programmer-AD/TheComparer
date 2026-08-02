@@ -28,6 +28,7 @@ export class PackManagementPage {
 
     constructor() {
         effect(async () => {
+            // TODO: Fix flickering
             await this.initFormDataAsync();
         });
     }

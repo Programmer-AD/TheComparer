@@ -45,6 +45,8 @@ export class HomePage {
     constructor() {
         effect(async () => {
             this.pageSetupService.setupPage("Welcome to TheComparer", null);
+
+            // TODO: Fix flickering
             await Promise.all([
                 this.refreshComparisonSessionsAsync(),
                 this.refreshItemPacksAsync()
