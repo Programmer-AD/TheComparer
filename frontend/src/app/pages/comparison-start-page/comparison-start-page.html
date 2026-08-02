@@ -1,17 +1,23 @@
-@let itemPackObj = this.itemPack();
-<app-page-title-component [titleText]="`Setup comparison for &quot;${itemPackObj.name}&quot;`" backButtonUrl="/" />
+@let itemPack = itemPackResource.value();
+
+@if (itemPackResource.isLoading()){
+<app-loading-placeholder-page />
+} @else if (itemPack === undefined) {
+<app-not-found-page />
+} @else {
+<app-page-title-component [titleText]="`Setup comparison for &quot;${itemPack.name}&quot;`" backButtonUrl="/" />
 
 <div class="item-pack-info-container">
-    @if (itemPackObj.icon !== undefined){
-    <img class="big-icon-image" alt="Item icon" [src]="itemPackObj.icon" />
+    @if (itemPack.icon !== undefined){
+    <img class="big-icon-image" alt="Item icon" [src]="itemPack.icon" />
     }
     <div class="item-pack-info">
-        <div class="item-pack-name">{{ itemPackObj.name }}</div>
-        @if (itemPackObj.author !== undefined){
-        <div class="item-pack-author">by {{itemPackObj.author}}</div>
+        <div class="item-pack-name">{{ itemPack.name }}</div>
+        @if (itemPack.author !== undefined){
+        <div class="item-pack-author">by {{itemPack.author}}</div>
         }
-        @if (itemPackObj.description !== undefined){
-        <div class="item-pack-description">{{ itemPackObj.description }}</div>
+        @if (itemPack.description !== undefined){
+        <div class="item-pack-description">{{ itemPack.description }}</div>
         }
     </div>
 </div>
@@ -46,3 +52,4 @@
     <!-- If we can't produce estimate - we can't start (some params are wrong) -->
     <button (click)="onStartButtonClick()" [disabled]="estimatedComparisonCount() === undefined">Start</button>
 </div>
+}

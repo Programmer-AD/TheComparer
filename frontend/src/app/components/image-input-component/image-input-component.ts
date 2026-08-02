@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, input, model, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, input, model, viewChild } from '@angular/core';
 import { FileInteractionService } from '../../utils';
 
 @Component({
@@ -24,8 +24,6 @@ export class ImageInputComponent {
     public constructor() {
         effect(async () => {
             const value = this.value();
-
-            // TODO: Fix flickering
             await this.renderImage(value);
         });
     }

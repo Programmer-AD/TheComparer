@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, resource } from '@angular/core';
+import { Component, computed, inject, input, resource } from '@angular/core';
 import { ComparisonModeService, ItemPackService, ComparisonModeConstants, ComparisonSessionService } from '../../logic';
 import { ComparisonItemSelectionComponent } from "./comparison-item-selection-component/comparison-item-selection-component";
 import { EloRankingModeResultComponent, StickyModeResultComponent, TournamentModeResultComponent } from "./mode-specific";

@@ -1,4 +1,11 @@
-<app-page-title-component [titleText]="`Manage pack &quot;${itemPack().name}&quot;`" backButtonUrl="/" />
+@let itemPack = itemPackResource.value();
+
+@if (itemPackResource.isLoading()){
+<app-loading-placeholder-page />
+} @else if (itemPack === undefined) {
+<app-not-found-page />
+} @else {
+<app-page-title-component [titleText]="`Manage pack &quot;${itemPack.name}&quot;`" backButtonUrl="/" />
 
 <div>
     <h2>Item pack properties</h2>
@@ -48,6 +55,7 @@
     </div>
     <button (click)="onSaveButtonClick()">Save</button>
 </div>
+
 @let selectedItemObj = selectedItem();
 @if (selectedItemObj !== undefined){
 <app-modal-dialog-component (closing)="onItemEditModalClosing()">
@@ -66,4 +74,5 @@
         </div>
     </div>
 </app-modal-dialog-component>
+}
 }
