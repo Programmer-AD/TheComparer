@@ -1,13 +1,14 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, resource, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FileInteractionService } from '../../utils';
 import { ComparisonModeService, ComparisonSessionService, ItemPackService } from '../../logic';
 import { ComparisonSession, ItemPack } from '../../models';
 import { PageTitleComponent } from "../../components";
+import { LoadingPlaceholderPage } from "../loading-placeholder-page/loading-placeholder-page";
 
 @Component({
     selector: 'app-home-page',
-    imports: [PageTitleComponent],
+    imports: [PageTitleComponent, LoadingPlaceholderPage],
     templateUrl: './home-page.html',
     styleUrl: './home-page.scss',
 })
@@ -18,11 +19,22 @@ export class HomePage {
     private comparisonModeService = inject(ComparisonModeService);
     private itemPackService = inject(ItemPackService);
 
-    protected readonly itemPacks = signal<ItemPack[]>([]);
-    private readonly comparisonSessions = signal<ComparisonSession[]>([]);
+    protected readonly itemPacksResource = resource({
+        params: () => ({}),
+        loader: () => this.itemPackService.getAllAsync(),
+    });
+    protected readonly comparisonSessionsResource = resource({
+        params: () => ({}),
+        loader: () => this.comparisonSessionService.getAllAsync(),
+    });
+
     protected readonly sessionFilterValue = signal<number>(0);
     protected readonly filteredComparisonSessions = computed(() => {
-        const sessions = this.comparisonSessions();
+        if (!this.comparisonSessionsResource.hasValue()) {
+            return [];
+        }
+
+        const sessions = this.comparisonSessionsResource.value();
         const sessionFilterValue = this.sessionFilterValue();
 
         const extendedSessions = sessions.map(x => ({ ...x, comparisonModeName: this.comparisonModeService.getById(x.comparisonMode)!.name }));
@@ -42,19 +54,10 @@ export class HomePage {
         });
     });
 
-    constructor() {
-        effect(async () => {
-            // TODO: Fix flickering
-            await Promise.all([
-                this.refreshComparisonSessionsAsync(),
-                this.refreshItemPacksAsync()
-            ]);
-        })
-    }
-
     protected async onCreateNewPackClick(): Promise<void> {
         await this.itemPackService.createNewAsync();
-        await this.refreshItemPacksAsync();
+
+        this.itemPacksResource.reload();
     }
 
     protected async onImportPackClick(): Promise<void> {
@@ -65,7 +68,8 @@ export class HomePage {
 
         const data = await file.text();
         await this.itemPackService.importAsync(data);
-        await this.refreshItemPacksAsync();
+
+        this.itemPacksResource.reload();;
     }
 
     protected async onFetchCommonPacksClick() {
@@ -77,7 +81,8 @@ export class HomePage {
         for (const packUrl of packUrls) {
             const packData = await fetch(packUrl).then(x => x.text());
             await this.itemPackService.importAsync(packData);
-            await this.refreshItemPacksAsync();
+
+            this.itemPacksResource.reload();;
         }
     }
 
@@ -103,7 +108,8 @@ export class HomePage {
 
         if (confirm(`Are you sure you want to delete item pack "${itemPack.name}"?`)) {
             await this.itemPackService.deleteAsync(itemPack.id);
-            this.refreshItemPacksAsync();
+
+            this.itemPacksResource.reload();;
         }
     }
 
@@ -113,7 +119,8 @@ export class HomePage {
         const modeName = this.comparisonModeService.getById(comparisonSession.comparisonMode)!.name;
         if (confirm(`Are you sure you want to delete session ${modeName} "${comparisonSession.itemPackName}"?`)) {
             await this.comparisonSessionService.deleteAsync(comparisonSession.id);
-            this.refreshComparisonSessionsAsync();
+
+            this.comparisonSessionsResource.reload();
         }
     }
 
@@ -128,15 +135,5 @@ export class HomePage {
         } else {
             this.router.navigate(["comparison", comparisonSession.id, "result"]);
         }
-    }
-
-    private async refreshComparisonSessionsAsync(): Promise<void> {
-        const comparisonSessions = await this.comparisonSessionService.getAllAsync();
-        this.comparisonSessions.set(comparisonSessions);
-    }
-
-    private async refreshItemPacksAsync(): Promise<void> {
-        const itemPacks = await this.itemPackService.getAllAsync();
-        this.itemPacks.set(itemPacks);
     }
 }
