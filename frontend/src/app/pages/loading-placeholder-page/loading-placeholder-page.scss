@@ -11,19 +11,19 @@
     flex-direction: column;
     align-items: center;
 
+    animation: fadeInOut 0.2s ease-in forwards;
+
+
     .spinner {
         display: inline-block;
 
         margin-top: 100px;
         padding: 100px;
 
-        animation-name: spinnerAnimation;
-        animation-duration: 2s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
+        animation: spinnerAnimation 2s linear infinite;
 
         border-radius: 50%;
-        background: conic-gradient(var(--background-color) 0%, var(--controls-background-color) 100%);
+        background: conic-gradient(var(--background-color) 0%, rgba(from var(--controls-background-color) r g b / 80%) 100%);
     }
 }
 
