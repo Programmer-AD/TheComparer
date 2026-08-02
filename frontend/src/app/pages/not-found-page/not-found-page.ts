@@ -1,18 +1,11 @@
-import { Component, effect, inject } from '@angular/core';
-import { PageSetupService } from '../../utils';
+import { Component } from '@angular/core';
+import { PageTitleComponent } from "../../components";
 
 @Component({
     selector: 'app-not-found-page',
-    imports: [],
+    imports: [PageTitleComponent],
     templateUrl: './not-found-page.html',
     styleUrl: './not-found-page.scss',
 })
 export class NotFoundPage {
-    private pageSetupService = inject(PageSetupService);
-
-    constructor() {
-        effect(() => {
-            this.pageSetupService.setupPage("Not found", "/");
-        })
-    }
 }

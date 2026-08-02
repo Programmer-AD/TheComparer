@@ -2,11 +2,10 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter, withComponentInputBinding, withHashLocation } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay, withNoIncrementalHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
     providers: [
         provideBrowserGlobalErrorListeners(),
-        provideRouter(routes, withComponentInputBinding(), withHashLocation()), provideClientHydration(withEventReplay(), withNoIncrementalHydration())
+        provideRouter(routes, withComponentInputBinding(), withHashLocation()),
     ]
 };

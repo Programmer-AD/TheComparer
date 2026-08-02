@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, input, model, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, input, model, viewChild } from '@angular/core';
 import { FileInteractionService } from '../../utils';
 
 @Component({
@@ -22,9 +22,9 @@ export class ImageInputComponent {
     protected isImageSelectionSupported = computed(() => this.canvasContext() !== undefined);
 
     public constructor() {
-        effect(() => {
+        effect(async () => {
             const value = this.value();
-            this.renderImage(value);
+            await this.renderImage(value);
         });
     }
 

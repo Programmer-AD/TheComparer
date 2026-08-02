@@ -1,3 +1,10 @@
+@let itemPacks = itemPacksResource.value()!;
+
+@if (itemPacksResource.isLoading() || comparisonSessionsResource.isLoading()){
+<app-loading-placeholder-page />
+} @else {
+<app-page-title-component titleText="Welcome to The Comparer" />
+
 <div class="description-text">
     Welcome to "The Comparer" - an utility which helps to find out your hidden preferences using set of simple comparsions.<br>
     Click "<strong>Fetch common packs</strong>" to get example pack(s).
@@ -10,7 +17,7 @@
         <button (click)="onFetchCommonPacksClick()">Fetch common packs</button>
     </div>
     <div class="grid-data">
-        @for (itemPack of itemPacks(); track itemPack.id){
+        @for (itemPack of itemPacks; track itemPack.id){
         <div class="row" (click)="onPackRowClick(itemPack)">
             <div class="row-data">
                 <img class="icon-image" [class.invisible]="itemPack.icon === undefined" alt="Item pack icon" [src]="itemPack.icon" />
@@ -68,3 +75,4 @@
         }
     </div>
 </div>
+}
