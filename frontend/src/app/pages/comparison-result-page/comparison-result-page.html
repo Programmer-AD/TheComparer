@@ -38,7 +38,7 @@
     }
 </div>
 <div>
-    <h2>Selections (time-reversed)</h2>
+    <h2>Selections (time-reversed) [{{ selectionRows()?.length ?? 0 }}]</h2>
     <div class="grid-data">
         @for (selectionRow of selectionRows(); track $index){
         <div class="row">
