@@ -1,5 +1,7 @@
 <div class="image-input-container" [style.display]="isImageSelectionSupported() ? 'inline-block': 'none'">
-    <canvas #canvas [width]="imageWidth()" [height]="imageHeight()" (click)="onCanvasClick()"></canvas>
+    <canvas #canvas [width]="imageWidth()" [height]="imageHeight()"></canvas>
+    <div class="input-overlay" tabindex="0" (dblclick)="onSelectImageClick()" (paste)="onPaste($event)"></div>
+    <button class="select-image-button" (click)="onSelectImageClick()">↑</button>
     <button class="clear-button" (click)="onClearClick()">X</button>
 </div>
 @if (!isImageSelectionSupported()) {

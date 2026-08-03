@@ -4,7 +4,7 @@ import { ArrayExtensions, MapExtensions } from "../extensions";
 
 export class EloRankingMode extends ComparisonMode {
     // This may be configurable in next version
-    private readonly roundCount = 5;
+    private readonly roundCount = 3;
     private readonly ratingCoefficient = 200;
     private readonly maxRatingDifference = 400;
     private readonly defaultRating = 2000;
