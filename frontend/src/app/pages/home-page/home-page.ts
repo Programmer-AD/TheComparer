@@ -73,7 +73,7 @@ export class HomePage {
     }
 
     protected async onFetchCommonPacksClick() {
-        const commonPacks = ["products"];
+        const commonPacks = ["fruits-berries", "poe2-core-currency", "popular-cartoons"];
         // This should be made reusable whenever it would be necessary, also more user-friendly (loading spinner)
         const baseUrl = document.getElementsByTagName("base")[0].href;
         const packUrls = commonPacks.map(packName => `${baseUrl}common-packs/${packName}.pack`);
@@ -81,9 +81,9 @@ export class HomePage {
         for (const packUrl of packUrls) {
             const packData = await fetch(packUrl).then(x => x.text());
             await this.itemPackService.importAsync(packData);
-
-            this.itemPacksResource.reload();;
         }
+
+        this.itemPacksResource.reload();;
     }
 
     protected onPackRowClick(itemPack: ItemPack): void {
