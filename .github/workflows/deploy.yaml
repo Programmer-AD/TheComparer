@@ -3,7 +3,7 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - production
 
 permissions:
   contents: read
@@ -43,14 +43,14 @@ jobs:
         run: npx ng build --configuration production --base-href /TheComparer/
 
       - name: Upload Build Artifact
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/production'
         uses: actions/upload-pages-artifact@v5
         with:
           path: "frontend/dist/TheComparer/browser"
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
 
     environment:
