@@ -1,9 +1,31 @@
+.image-input-container {
+    position: relative;
+}
+
 canvas {
     border: solid 1px var(--border-color);
 }
 
-.image-input-container {
-    position: relative;
+.input-overlay {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+
+    &:focus {
+        border-radius: 5px;
+        outline: auto;
+    }
+}
+
+.select-image-button {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
 }
 
 .clear-button {

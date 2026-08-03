@@ -28,13 +28,44 @@ export class ImageInputComponent {
         });
     }
 
-    protected async onCanvasClick() {
+    protected async onSelectImageClick(): Promise<void> {
         const file = await this.fileInteractionService.selectFileAsync();
         if (file === undefined) {
             return;
         }
 
-        const dataUrl = URL.createObjectURL(file);
+        await this.handleBlobValue(file);
+    }
+
+    protected async onPaste(event: ClipboardEvent): Promise<void> {
+        event.preventDefault();
+        event.stopPropagation();
+
+
+        const clipboardData = event.clipboardData;
+        if (clipboardData === null) {
+            return;
+        }
+
+        const imageItem = [...clipboardData.items].find(x => x.type.includes("image"));
+        if (imageItem === undefined) {
+            return;
+        }
+
+        const imageBlob = imageItem.getAsFile();
+        if (imageBlob === null) {
+            return;
+        }
+
+        await this.handleBlobValue(imageBlob);
+    }
+
+    protected onClearClick(): void {
+        this.value.set(undefined);
+    }
+
+    private async handleBlobValue(blob: Blob): Promise<void> {
+        const dataUrl = URL.createObjectURL(blob);
         try {
             const hasDrawn = await this.renderImage(dataUrl);
 
@@ -49,10 +80,6 @@ export class ImageInputComponent {
         } finally {
             URL.revokeObjectURL(dataUrl);
         }
-    }
-
-    protected onClearClick() {
-        this.value.set(undefined);
     }
 
     private async renderImage(dataUrl: string | undefined): Promise<boolean> {
