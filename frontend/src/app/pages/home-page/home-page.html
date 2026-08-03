@@ -10,7 +10,7 @@
     Click "<strong>Fetch common packs</strong>" to get example pack(s).
 </div>
 <div>
-    <h2>Item packs</h2>
+    <h2>Item packs [{{ itemPacks.length }}]</h2>
     <div class="button-line">
         <button (click)="onCreateNewPackClick()">Create new pack</button>
         <button (click)="onImportPackClick()">Import pack</button>
@@ -41,7 +41,7 @@
     </div>
 </div>
 <div>
-    <h2>Sessions</h2>
+    <h2>Sessions [{{ filteredComparisonSessions().length }}]</h2>
     <div>
         <select (input)="onSessionFilterSelectionChange($event)">
             <option selected value="0">All</option>
